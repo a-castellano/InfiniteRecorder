@@ -28,3 +28,11 @@ function check_required_variable {
 		return 1
 	fi
 }
+
+# define_cam_foder
+#
+# Defines folder where videos will be sotored
+
+function define_cam_foder {
+	CAM_FOLDER=$(echo "${RECORDING_FOLDER}/${CAM_NAME}" | perl -pe "s/\/\//\//g")
+}

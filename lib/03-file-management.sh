@@ -20,7 +20,8 @@
 # returns 1 if operation failed
 
 function create_recording_folder {
-	create_folder_command="mkdir -p ${RECORDING_FOLDER}"
+#	CAM_FOLDER=$(echo "${RECORDING_FOLDER}/${CAM_NAME}" | perl -pe "s/\/\//\//g")
+	create_folder_command="mkdir -p ${CAM_FOLDER}"
 	su - "${OWNER_USER}" -s /bin/bash -c "${create_folder_command}" 2>/dev/null
 	return $?
 }

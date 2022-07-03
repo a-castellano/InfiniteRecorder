@@ -19,6 +19,7 @@
 source lib/01-log.sh
 source lib/02-variable-management.sh
 source lib/03-file-management.sh
+source lib/04-ffmpeg.sh
 
 ###################
 ###     Main    ###
@@ -34,7 +35,6 @@ required_variables=(
 	'cam-user'
 	'cam-password'
 	'cam-url'
-	'cam-name'
 	'video-length'
 	'owner-user'
 	'recording-folder'
@@ -55,10 +55,22 @@ if [[ "${abort_script}" = true ]]; then
 fi
 
 # Prepare recording
+define_cam_foder
 create_recording_folder
 folder_created=$?
 if [[ "X${folder_created}X" != "X0X" ]]; then
 	write_log "Cannot create recording folder ${RECORDING_FOLDER} as user ${OWNER_USER}"
 	exit 1
-
 fi
+
+# Take snapshot test
+
+take_snapshot
+snapshot_created=$?
+if [[ "X${snapshot_created}X" != "X0X" ]]; then
+	write_log "Cannot create snapshot test."
+	exit 1
+fi
+
+# Record Video
+record_video
