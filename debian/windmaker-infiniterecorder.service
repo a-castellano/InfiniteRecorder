@@ -1,0 +1,13 @@
+[Unit]
+Description=Windmaker Infiniterecorder
+After=network.target remote-fs.target nss-lookup.target
+
+[Service]
+Type=simple
+User=root
+EnvironmentFile=/etc/default/windmaker-infiniterecorder-%i
+ExecStart=/usr/bin/windmaker-infiniterecorder
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
