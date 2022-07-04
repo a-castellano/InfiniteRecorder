@@ -48,7 +48,7 @@ fi
 
 function record_video {
 	record_vide_command="
-ffmpeg -y -i rtsp://${CAM_USER}:${CAM_PASSWORD}@${CAM_IP}:${CAM_PORT}${CAM_URL} -c copy  -map 0 -f segment -segment_time ${VIDEO_LENGTH} -segment_format mp4 -strftime 1 \"${CAM_FOLDER}/record-%Y-%m-%d_%H-%M-%S.mp4\" -use_wallclock_as_timestamps 1 -reset_timestamps 1 -metadata title=\"${CAM_NAME}\""
+ffmpeg -y -i rtsp://${CAM_USER}:${CAM_PASSWORD}@${CAM_IP}:${CAM_PORT}${CAM_URL} -c copy  -map 0 -f segment -segment_time ${VIDEO_LENGTH} -segment_format mp4 -strftime 1 \"${CAM_FOLDER}/record-%Y-%m-%d_%H-%M-%S.mp4\" -use_wallclock_as_timestamps 1 -reset_timestamps 1 -vcodec libx264 -metadata title=\"${CAM_NAME}\""
 
 	su - "${OWNER_USER}" -s /bin/bash -c "${record_vide_command}" 2>/dev/null > /dev/null
 }

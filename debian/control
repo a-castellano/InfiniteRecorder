@@ -1,0 +1,11 @@
+Source: windmaker-infiniterecorder
+Maintainer: Álvaro Castellano Vela <alvaro.castellano.vela@gmail.com>
+Section: misc
+Priority: optional
+Standards-Version: 0.1
+Build-Depends: debhelper (>= 9)
+
+Package: windmaker-infiniterecorder
+Architecture: any
+Depends: ffmpeg, ${shlibs:Depends}, ${misc:Depends}
+Description: Record RTSP streams infinitely
