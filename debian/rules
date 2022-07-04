@@ -4,5 +4,7 @@
 
 override_dh_auto_install:
 	$(MAKE) DESTDIR=$$(pwd)/debian/windmaker-infiniterecorder prefix=/usr install
-	dh_systemd_enable && false
-	dh_systemd_start && false
+override_dh_systemd_start:
+	dh_systemd_start --no-start
+override_dh_systemd_enable:
+	dh_systemd_enable --no-enable
