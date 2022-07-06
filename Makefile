@@ -12,16 +12,21 @@ build:
 	( cp -R lib clean_lib )
 	( find clean_lib -type f -exec sed  -i '/^\#.*$$/d' {} \; )
 	( find clean_lib -type f -exec sed  -i '/source .*$$/d' {} \; )
-	( perl -pe 's/source lib\/(.*)$$/`cat clean_lib\/$$1`/e'  src/$(PROG) > $(PROG) )
-	( chmod 755 $(PROG) )
+	( perl -pe 's/source lib\/(.*)$$/`cat clean_lib\/$$1`/e'  src/windmaker-infiniterecorder > windmaker-infiniterecorder )
+	( perl -pe 's/source lib\/(.*)$$/`cat clean_lib\/$$1`/e'  src/windmaker-infiniterecorder-video-manager > windmaker-infiniterecorder-video-manager )
+	( chmod 755 windmaker-infiniterecorder )
+	( chmod 755 windmaker-infiniterecorder-video-manager )
 	( rm -rf clean_lib )
 
 clean:
-	( rm -f $(PROG) )
+	( rm -f windmaker-infiniterecorder )
+	( rm -f windmaker-infiniterecorder-video-manager )
 
 install:
-	install $(PROG) $(DESTDIR)$(bindir)
+	install windmaker-infiniterecorder $(DESTDIR)$(bindir)
+	install windmaker-infiniterecorder-video-manager $(DESTDIR)$(bindir)
 
 uninstall:
-	( rm $(DESTDIR)$(bindir)$(PROG) )
+	( rm $(DESTDIR)$(bindir)windmaker-infiniterecorder )
+	( rm $(DESTDIR)$(bindir)windmaker-infiniterecorder-video-manager )
 
