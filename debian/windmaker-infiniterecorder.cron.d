@@ -1,1 +1,1 @@
-5 * * * * root 
+5 * * * * root /usr/bin/windmaker-infiniterecorder-video-manager
