@@ -1,7 +1,7 @@
 #!/bin/bash -
 #===============================================================================
 #
-#          FILE: 04-ffmpeg.sh
+#          FILE: 06-ffmpeg.sh
 #
 #   DESCRIPTION: ffmpeg related functions
 #

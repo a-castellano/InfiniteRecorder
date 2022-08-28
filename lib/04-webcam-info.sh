@@ -32,15 +32,17 @@ function check_required_variable {
 # define_consul_array
 #
 # Defines consul array from CONSUL_CLUSTER variable content
-# returns 1 (true) or 0 (false) if it cluster has at least one host
+# If no consul server are defined this function returns 1
 
 function define_consul_array {
+	declare -a CONSUL_CLUSTER_ARRAY
 
 	CONSUL_CLUSTER_ARRAY_RAW=($(echo ${CONSUL_CLUSTER} | tr ',' "\n"))
 	for raw_item in ${CONSUL_CLUSTER_ARRAY_RAW[@]}; do
 		item=$(echo ${raw_item} | xargs)
 		CONSUL_CLUSTER_ARRAY+=($item)
 	done
+	echo "${CONSUL_CLUSTER_ARRAY[@]}"
 	array_size="${!CONSUL_CLUSTER_ARRAY[@]}"
 	if [[ "X${array_size}X" == "X0X" ]]; then
 		write_log "No consul servers defined."
