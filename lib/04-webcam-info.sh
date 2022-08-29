@@ -1,65 +1,49 @@
 #!/bin/bash -
 #===============================================================================
 #
-#          FILE: 02-variable-management.sh
+#          FILE: 04-webcam-info.sh
 #
-#   DESCRIPTION: Variable Management functions
+#   DESCRIPTION: Retrieve WebCam info from consul
 #
 #       OPTIONS: ---
 #  REQUIREMENTS: ---
 #          BUGS: ---
 #         NOTES: ---
 #        AUTHOR: Álvaro Castellano Vela (alvaro.castellano.vela@gmail.com),
-#       CREATED: 29/06/2022 22:57
+#       CREATED: 29/08/2022 19:32
 #      REVISION:  ---
 #===============================================================================
 
-# check_required_variable
+# list_webcams
 #
-# checks if required varible is defined
-# returns 1 (true) or 0 (false) if it exists
+# List webcams and populate WEBCAM_INSTANCES array
+# returns 1 (true) or 0 (false) if there were errors
 
-function check_required_variable {
-	required_variable=$1
-	if [[ -z ${!required_variable} ]]; then
-		write_log "${variable} is not defined."
-		return 0
-	else
-		return 1
-	fi
-}
-
-# define_consul_array
-#
-# Defines consul array from CONSUL_CLUSTER variable content
-# If no consul server are defined this function returns 1
-
-function define_consul_array {
-	declare -a CONSUL_CLUSTER_ARRAY
-
-	CONSUL_CLUSTER_ARRAY_RAW=($(echo ${CONSUL_CLUSTER} | tr ',' "\n"))
-	for raw_item in ${CONSUL_CLUSTER_ARRAY_RAW[@]}; do
-		item=$(echo ${raw_item} | xargs)
-		CONSUL_CLUSTER_ARRAY+=($item)
-	done
-	echo "${CONSUL_CLUSTER_ARRAY[@]}"
-	array_size="${!CONSUL_CLUSTER_ARRAY[@]}"
+function list_webcams {
+	write_log "Listing webcams"
+	mapfile -t WEBCAM_INSTANCES < <( curl -s --header "X-Consul-Token: ${WEBCAM_CONSUL_TOKEN}"  http://${consul_server}:${CONSUL_PORT}/v1/catalog/services | jq -r 'keys[]')
+	array_size="${#WEBCAM_INSTANCES[@]}"
+	write_log "Found ${array_size} webcams"
 	if [[ "X${array_size}X" == "X0X" ]]; then
 		write_log "No consul servers defined."
 		return 0
-	else
-		write_log "The following consul servers have been defined:"
-		for server in ${CONSUL_CLUSTER_ARRAY[@]}; do
-			write_log "${server}"
-		done
-		return 1
 	fi
+	return 1
 }
 
-# define_cam_foder
+# get_webcams_info
 #
-# Defines folder where videos will be sotored
+# Obtain webcams info from Consult and store it in
+# WEBCAM_INSTANCES_INFO associative array
 
-function define_cam_foder {
-	CAM_FOLDER=$(echo "${RECORDING_FOLDER}/${CAM_NAME}" | perl -pe "s/\/\//\//g")
+function get_webcams_info {
+	for webcam_instance in ${WEBCAM_INSTANCES[@]}; do
+	JSON_INFO=$(mktemp)
+write_log "Retrieving webcam '${webcam_instance}' info."
+	curl -s --header "X-Consul-Token: ${WEBCAM_CONSUL_TOKEN}"  http://${consul_server}:${CONSUL_PORT}/v1/catalog/service/${webcam_instance} > ${JSON_INFO}
+	WEBCAM_INSTANCES_INFO[${webcam_instance}_IP]=$(jq '.[] | .ServiceAddress' ${JSON_INFO}) 
+	WEBCAM_INSTANCES_INFO[${webcam_instance}_PORT]=$(jq '.[] | .ServiceMeta.streamPort' ${JSON_INFO}) 
+	WEBCAM_INSTANCES_INFO[${webcam_instance}_URL]=$(jq '.[] | .ServiceMeta.stramURL' ${JSON_INFO}) 
+	rm -f ${JSON_INFO}
+done
 }
