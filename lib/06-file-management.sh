@@ -1,7 +1,7 @@
 #!/bin/bash -
 #===============================================================================
 #
-#          FILE: 05-file-management.sh
+#          FILE: 06-file-management.sh
 #
 #   DESCRIPTION: File Management functions
 #

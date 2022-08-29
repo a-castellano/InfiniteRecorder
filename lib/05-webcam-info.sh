@@ -1,7 +1,7 @@
 #!/bin/bash -
 #===============================================================================
 #
-#          FILE: 04-webcam-info.sh
+#          FILE: 05-webcam-info.sh
 #
 #   DESCRIPTION: Retrieve WebCam info from consul
 #
