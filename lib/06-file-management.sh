@@ -19,9 +19,26 @@
 # creates recording_folder
 # returns 1 if operation failed
 
-function create_recording_folder {
-#	CAM_FOLDER=$(echo "${RECORDING_FOLDER}/${CAM_NAME}" | perl -pe "s/\/\//\//g")
-	create_folder_command="mkdir -p ${CAM_FOLDER}"
+function create_recording_folders {
+	found_errors=false
+	for webcam_instance in ${WEBCAM_INSTANCES[@]}; do
+		folder_name="${WEBCAM_INSTANCES_INFO[${webcam_instance}_FOLDER]}"
+		write_log "Creating folder ${folder_name}"
+			create_folder_command="mkdir -p ${folder_name}"
 	su - "${OWNER_USER}" -s /bin/bash -c "${create_folder_command}" 2>/dev/null
-	return $?
+	error_code=$?
+	if [[ "X${error_code}X" == "X0X" ]]; then
+		write_log "Folder ${folder_name} created"
+	else
+		found_errors=true
+		write_log "Caanot create folder ${folder_name}"
+	fi
+
+	done
+	if [ "$found_errors" = false ]; then
+return 1
+else
+	write_log "Cannot create all folders"
+	return 0
+	fi
 }
