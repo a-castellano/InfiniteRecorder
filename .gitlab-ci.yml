@@ -13,6 +13,3 @@ build_package:
     paths:
       - deb_package
     expire_in: 1 hour
-  only:
-    - master
-
