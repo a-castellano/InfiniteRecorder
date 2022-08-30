@@ -9,6 +9,7 @@ User=root
 EnvironmentFile=/etc/default/windmaker-infiniterecorder
 ExecStart=/usr/bin/windmaker-infiniterecorder
 Restart=always
+KillMode=control-group
 
 [Install]
 WantedBy=multi-user.target
