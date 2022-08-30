@@ -1,0 +1,10 @@
+VIDEO_LENGTH="0:15"
+OWNER_USER="alvaro"
+RECORDING_FOLDER="/home/alvaro/recordings"
+CONSUL_CLUSTER="consul01.windmaker.net,consul02.windmaker.net , argos.windmaker.net"
+CONSUL_PORT=8500
+WEBCAM_CONSUL_TOKEN="token"
+ALARM_MANAGER_CONSUL_TOKEN="token"
+VAULT_CONSUL_TOKEN="token"
+VAULT_USER="user"
+VAULT_PASSWORD="password"
