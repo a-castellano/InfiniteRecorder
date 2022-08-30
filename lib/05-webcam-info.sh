@@ -50,6 +50,6 @@ write_log "Retrieving webcam '${webcam_instance}' credentials."
 WEBCAM_INSTANCES_INFO[${webcam_instance}_USER]=$(curl -s -X GET -H 'Content-Type: application/json' -H "X-Vault-Token: ${VAULT_ACESS_TOKEN}" https://${VAULT_SERVER}/v1/kv/data/webcam/${webcam_instance} -k | jq -r '.data.data.user')
 WEBCAM_INSTANCES_INFO[${webcam_instance}_PASSWORD]=$(curl -s -X GET -H 'Content-Type: application/json' -H "X-Vault-Token: ${VAULT_ACESS_TOKEN}" https://${VAULT_SERVER}/v1/kv/data/webcam/${webcam_instance} -k | jq -r '.data.data.password')
 	rm -f ${VAULT_INFO}
-	WEBCAM_INSTANCES_INFO[${webcam_instance}_FOLDER]=$(echo "${RECORDING_FOLDER}/${webcam_instance}" | perl -pe "s/\/\//\//g")
+	WEBCAM_INSTANCES_INFO[${webcam_instance}_FOLDER]=$(echo "${RECORDING_FOLDER}/${webcam_instance}/raw" | perl -pe "s/\/\//\//g")
 done
 }

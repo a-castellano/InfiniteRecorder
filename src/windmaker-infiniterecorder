@@ -1,0 +1,138 @@
+#!/bin/bash -
+#===============================================================================
+#
+#          FILE: windmaker-infiniterecorder
+#
+#         USAGE: It runs  a service called windmaker-infiniterecorder
+#
+#   DESCRIPTION:
+#
+#       OPTIONS: ---
+#  REQUIREMENTS: ---
+#          BUGS: ---
+#         NOTES: ---
+#        AUTHOR: Álvaro Castellano Vela (alvaro.castellano.vela@gmail.com),
+#       CREATED: 25/06/2022 01:48
+#      REVISION:  ---
+#===============================================================================
+
+source lib/01-log.sh
+source lib/02-variable-management.sh
+source lib/03-consul.sh
+source lib/04-vault.sh
+source lib/05-webcam-info.sh
+source lib/06-file-management.sh
+source lib/07-ffmpeg.sh
+source lib/08-threads.sh
+
+###################
+###     Main    ###
+###################
+
+SCRIPT_NAME="InfiniteRecorder"
+
+# Check Variables
+declare -a required_variables
+required_variables=(
+	'video-length'
+	'owner-user'
+	'recording-folder'
+	'consul-cluster'
+	'consul-port'
+	'webcam-consul-token'
+	'alarm-manager-consul-token'
+	'vault-consul-token'
+	'vault-user'
+	'vault-password'
+)
+
+abort_script=false
+
+# Check Required variables
+
+for var in ${required_variables[@]}; do
+	variable=$(echo ${var} | tr '[:lower:]' '[:upper:]' | tr '-' '_')
+	check_required_variable ${variable}
+	defined_variable=$?
+	if [[ "X${defined_variable}X" == "X0X" ]]; then
+		abort_script=true
+	fi
+done
+
+if [[ "${abort_script}" = true ]]; then
+	write_log "Aborting execucion"
+	exit 1
+fi
+
+
+write_log  "Processing CONSUL_CLUSTER variable"
+
+declare -a CONSUL_CLUSTER_ARRAY
+define_consul_array
+cluster_found=$?
+
+if [[ "X${cluster_found}X" = "X0X" ]]; then
+	write_log "Aborting execucion"
+	exit 1
+fi
+
+
+write_log  "Choosing consul server"
+choose_consul_server
+
+if [[ "X${CONSUL_SERVER}X" == "XX" ]]; then
+	write_log "No consul server passed checks, aborting script"
+	exit 1
+fi
+
+VAULT_SERVER=""
+VAULT_ACESS_TOKEN=""
+
+choose_vault_server
+obtain_vault_access_token
+
+declare -a WEBCAM_INSTANCES
+declare -A WEBCAM_INSTANCES_INFO
+
+list_webcams
+list_retrieved=$?
+if [[ "X${list_retrieved}X" = "X0X" ]]; then
+	write_log "Aborting execucion"
+	exit 1
+fi
+
+get_webcams_info
+
+
+# Prepare recording
+create_recording_folders
+folders_created=$?
+if [[ "X${folders_created}X" == "X0X" ]]; then
+	write_log "Cannot create required folders as user ${OWNER_USER}"
+exit 1
+fi
+
+# Take snapshot test
+
+take_snapshots
+snapshot_created=$?
+if [[ "X${snapshot_created}X" == "X0X" ]]; then
+	write_log "Aborting."
+	exit 1
+fi
+
+# Record Videos
+
+for webcam_instance in ${WEBCAM_INSTANCES[@]}; do
+write_log "Lauching record video thread for ${webcam_instance}"
+record_video "${WEBCAM_INSTANCES_INFO[${webcam_instance}_RTSP_URL]}" "${WEBCAM_INSTANCES_INFO[${webcam_instance}_FOLDER]}" "${webcam_instance}" & >/dev/null 2> /dev/null
+	WEBCAM_INSTANCES_INFO[${webcam_instance}_THREAD]=$!
+write_log "${webcam_instance} thread id is ${WEBCAM_INSTANCES_INFO[${webcam_instance}_THREAD]}"
+done
+for webcam_instance in ${WEBCAM_INSTANCES[@]}; do
+	write_log "Waiting for ${webcam_instance} to finish"
+	wait ${WEBCAM_INSTANCES_INFO[${webcam_instance}_THREAD]}
+done
+
+write_log "End"
+###record_video

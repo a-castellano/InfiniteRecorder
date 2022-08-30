@@ -1,0 +1,37 @@
+#!/bin/bash -
+#===============================================================================
+#
+#          FILE: windmaker-infiniterecorder-video-manager
+#
+#         USAGE: Manage infinite recorder videos
+#
+#   DESCRIPTION:
+#
+#       OPTIONS: ---
+#  REQUIREMENTS: ---
+#          BUGS: ---
+#         NOTES: ---
+#        AUTHOR: Álvaro Castellano Vela (alvaro.castellano.vela@gmail.com),
+#       CREATED: 06/07/2022 08:06
+#      REVISION:  ---
+#===============================================================================
+
+source lib/01-log.sh
+
+###################
+###     Main    ###
+###################
+
+SCRIPT_NAME="Windmaker InfiniteRecorder Video Manager"
+
+if [ ! -f /etc/default/windmaker-infiniterecorder ]; then
+  write_log "/etc/default/windmaker-infiniterecorder does not exist, aborting script."
+else
+
+source /etc/default/windmaker-infiniterecorder
+
+write_log "Deleting raw videos older than 8 hours"
+
+find ${RECORDING_FOLDER} -type -f  -iwholename "*raw/*.mp4" -cmin -480 -delete
+
+fi

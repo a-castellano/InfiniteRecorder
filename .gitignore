@@ -1,3 +1,4 @@
 config
 windmaker-infiniterecorder
 windmaker-infiniterecorder-video-manager
+!src/*
