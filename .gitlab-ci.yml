@@ -8,8 +8,6 @@ build_package:
     - dpkg-buildpackage -uc -b
     - mkdir deb_package
     - mv *.deb deb_package/
-  dependencies:
-    - coverage
   artifacts:
     name: "coverage-$CI_PIPELINE_ID"
     paths:
