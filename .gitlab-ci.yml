@@ -7,8 +7,7 @@ build_package:
   script:
     - dpkg-buildpackage -uc -b
     - mkdir deb_package
-    - ls -lahrt
-    - mv *.deb deb_package/
+    - mv ../*.deb deb_package/
   artifacts:
     name: "coverage-$CI_PIPELINE_ID"
     paths:
