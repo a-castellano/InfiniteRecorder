@@ -21,11 +21,10 @@ source lib/08-log.sh
 # kills created threads
 
 function kill_threads {
-	for webcam_instance in ${WEBCAM_INSTANCES[@]}; do
-	write_log "Killing recording process of webcam ${webcam_instance}  ${WEBCAM_INSTANCES_INFO[${webcam_instance}_THREAD]}"
-	kill -9 ${WEBCAM_INSTANCES_INFO[${webcam_instance}_THREAD]}
-done
-
+	write_log "Killing recording processes"
+	for job_to_kill in $(jobs -p); do
+		kill -9 ${job_to_kill}
+	done
 }
 
 # Trap SIGTERM signal for killing threads
