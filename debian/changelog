@@ -1,3 +1,9 @@
+windmaker-infiniterecorder (0.3-2) UNRELEASED; urgency=medium
+
+  * fix logs
+
+ -- Álvaro Castellano Vela <alvaro.castellano.vela@gmail.com>  Mon, 30 Aug 2020 22:08:00 +0200
+
 windmaker-infiniterecorder (0.2-1) UNRELEASED; urgency=medium
 
   * windmaker-infiniterecorder is no longer a multiinstance service

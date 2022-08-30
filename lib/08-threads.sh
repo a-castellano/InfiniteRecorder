@@ -22,7 +22,7 @@ source lib/08-log.sh
 
 function kill_threads {
 	for webcam_instance in ${WEBCAM_INSTANCES[@]}; do
-	write_log "Killing recording process of webcam ${webcam_instance} -> ${WEBCAM_INSTANCES_INFO[${webcam_instance}_THREAD]}"
+	write_log "Killing recording process of webcam ${webcam_instance}  ${WEBCAM_INSTANCES_INFO[${webcam_instance}_THREAD]}"
 	kill -9 ${WEBCAM_INSTANCES_INFO[${webcam_instance}_THREAD]}
 done
 
