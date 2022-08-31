@@ -17,6 +17,7 @@
 #===============================================================================
 
 source lib/01-log.sh
+source lib/02-variable-management.sh
 
 ###################
 ###     Main    ###
@@ -26,12 +27,35 @@ SCRIPT_NAME="Windmaker InfiniteRecorder Video Manager"
 
 if [ ! -f /etc/default/windmaker-infiniterecorder ]; then
   write_log "/etc/default/windmaker-infiniterecorder does not exist, aborting script."
+  exit 1
 else
 
 source /etc/default/windmaker-infiniterecorder
 
-write_log "Deleting raw videos older than 8 hours"
+# Check Variables
+declare -a required_variables
+required_variables=(
+	'recording-folder'
+	'raw-video-delete-time'
+)
 
-find ${RECORDING_FOLDER} -type -f  -iwholename "*raw/*.mp4" -cmin -480 -delete
+abort_script=false
+
+# Check Required variables
+
+for var in ${required_variables[@]}; do
+	variable=$(echo ${var} | tr '[:lower:]' '[:upper:]' | tr '-' '_')
+	check_required_variable ${variable}
+	defined_variable=$?
+	if [[ "X${defined_variable}X" == "X0X" ]]; then
+		abort_script=true
+	fi
+done
+
+
+
+write_log "Deleting raw videos older than required time"
+
+find ${RECORDING_FOLDER} -type f  -iwholename "*raw/*.mp4" -cmin +${RAW_VIDEO_DELETE_TIME} -delete
 
 fi
