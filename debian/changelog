@@ -1,3 +1,9 @@
+windmaker-infiniterecorder (0.5-5) UNRELEASED; urgency=medium
+
+  * Change ffmpeg codec and check for ffmpeg dead instances
+
+ -- Álvaro Castellano Vela <alvaro.castellano.vela@gmail.com>  Mon, 31 Aug 2020 22:55:00 +0200
+
 windmaker-infiniterecorder (0.5-4) UNRELEASED; urgency=medium
 
   * Fix ffmpeg command

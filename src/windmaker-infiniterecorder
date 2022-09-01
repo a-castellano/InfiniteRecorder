@@ -129,9 +129,19 @@ record_video "${WEBCAM_INSTANCES_INFO[${webcam_instance}_RTSP_URL]}" "${WEBCAM_I
 	WEBCAM_INSTANCES_INFO[${webcam_instance}_THREAD]=$!
 write_log "${webcam_instance} thread id is ${WEBCAM_INSTANCES_INFO[${webcam_instance}_THREAD]}"
 done
+
+# Check if ffmpeg instances are still running
+while [ true ]; do
+	sleep 10
 for webcam_instance in ${WEBCAM_INSTANCES[@]}; do
-	write_log "Waiting for ${webcam_instance} to finish"
-	wait ${WEBCAM_INSTANCES_INFO[${webcam_instance}_THREAD]}
+	write_log "Checking if ${webcam_instance} ffmpeg recording is still running"
+	ffmpeg_instances=$(ps -aux | grep -v "su - ${OWNER_USER}" | grep ffmpeg | grep "${WEBCAM_INSTANCES_INFO[${webcam_instance}_FOLDER]}" | grep -v grep | wc -l)
+	echo "${ffmpeg_instances}"
+	if [[ "X${ffmpeg_instances}X" == "X0X" ]]; then
+		write_log "ffmpeg ${webcam_instance} instance is not running, launching again."
+		record_video "${WEBCAM_INSTANCES_INFO[${webcam_instance}_RTSP_URL]}" "${WEBCAM_INSTANCES_INFO[${webcam_instance}_FOLDER]}" "${webcam_instance}" & >/dev/null 2> /dev/null
+	fi
+done
 done
 
 write_log "End"

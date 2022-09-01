@@ -62,7 +62,7 @@ fi
 
 function record_video {
 	record_vide_command="
-ffmpeg -y -i $1 -c copy  -map 0 -f segment -segment_time ${VIDEO_LENGTH} -segment_format mp4 -strftime 1 -reset_timestamps 1 \"$2/record-%Y-%m-%d_%H-%M-%S.mp4\" -vcodec libx264 -metadata title=\"$3\""
+ffmpeg -y -i $1 -c copy  -map 0 -f segment -segment_time ${VIDEO_LENGTH} -segment_format mp4 -strftime 1 -reset_timestamps 1 \"$2/record-%Y-%m-%d_%H-%M-%S.mp4\" -vcodec libx265 -metadata title=\"$3\""
 
 	su - "${OWNER_USER}" -s /bin/bash -c "${record_vide_command}" 2>/dev/null > /dev/null
 }
