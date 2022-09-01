@@ -21,15 +21,15 @@
 
 function choose_consul_server {
 	CONSUL_SERVER=""
-  for consul_server in ${CONSUL_CLUSTER_ARRAY[@]}; do
-			write_log "Testing connection witch consul server ${server}"
-			consul_http_status_code=$(curl -s -o /dev/null -w "%{http_code}" --header "X-Consul-Token: ${WEBCAM_CONSUL_TOKEN}"  http://${consul_server}:${CONSUL_PORT}/v1/catalog/services)
-			if [[ "X${consul_http_status_code}X" = "X200X" ]]; then
-				found_server=true
-	      CONSUL_SERVER="${consul_server}"
-				write_log "Consul server ${CONSUL_SERVER} will be used."
-				break
-			fi
+	for consul_server in ${CONSUL_CLUSTER_ARRAY[@]}; do
+		write_log "Testing connection witch consul server ${server}"
+		consul_http_status_code=$(curl -s -o /dev/null -w "%{http_code}" --header "X-Consul-Token: ${WEBCAM_CONSUL_TOKEN}" http://${consul_server}:${CONSUL_PORT}/v1/catalog/services)
+		if [[ "X${consul_http_status_code}X" = "X200X" ]]; then
+			found_server=true
+			CONSUL_SERVER="${consul_server}"
+			write_log "Consul server ${CONSUL_SERVER} will be used."
+			break
+		fi
 	done
 
 }

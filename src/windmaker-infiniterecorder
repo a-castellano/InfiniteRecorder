@@ -64,8 +64,7 @@ if [[ "${abort_script}" = true ]]; then
 	exit 1
 fi
 
-
-write_log  "Processing CONSUL_CLUSTER variable"
+write_log "Processing CONSUL_CLUSTER variable"
 
 declare -a CONSUL_CLUSTER_ARRAY
 define_consul_array
@@ -76,8 +75,7 @@ if [[ "X${cluster_found}X" = "X0X" ]]; then
 	exit 1
 fi
 
-
-write_log  "Choosing consul server"
+write_log "Choosing consul server"
 choose_consul_server
 
 if [[ "X${CONSUL_SERVER}X" == "XX" ]]; then
@@ -103,13 +101,12 @@ fi
 
 get_webcams_info
 
-
 # Prepare recording
 create_recording_folders
 folders_created=$?
 if [[ "X${folders_created}X" == "X0X" ]]; then
 	write_log "Cannot create required folders as user ${OWNER_USER}"
-exit 1
+	exit 1
 fi
 
 # Take snapshot test
@@ -124,14 +121,26 @@ fi
 # Record Videos
 
 for webcam_instance in ${WEBCAM_INSTANCES[@]}; do
-write_log "Lauching record video thread for ${webcam_instance}"
-record_video "${WEBCAM_INSTANCES_INFO[${webcam_instance}_RTSP_URL]}" "${WEBCAM_INSTANCES_INFO[${webcam_instance}_FOLDER]}" "${webcam_instance}" & >/dev/null 2> /dev/null
+	write_log "Lauching record video thread for ${webcam_instance}"
+	record_video "${WEBCAM_INSTANCES_INFO[${webcam_instance}_RTSP_URL]}" "${WEBCAM_INSTANCES_INFO[${webcam_instance}_FOLDER]}" "${webcam_instance}" &
+	>/dev/null 2>/dev/null
 	WEBCAM_INSTANCES_INFO[${webcam_instance}_THREAD]=$!
-write_log "${webcam_instance} thread id is ${WEBCAM_INSTANCES_INFO[${webcam_instance}_THREAD]}"
+	write_log "${webcam_instance} thread id is ${WEBCAM_INSTANCES_INFO[${webcam_instance}_THREAD]}"
 done
-for webcam_instance in ${WEBCAM_INSTANCES[@]}; do
-	write_log "Waiting for ${webcam_instance} to finish"
-	wait ${WEBCAM_INSTANCES_INFO[${webcam_instance}_THREAD]}
+
+# Check if ffmpeg instances are still running
+while [ true ]; do
+	sleep 10
+	for webcam_instance in ${WEBCAM_INSTANCES[@]}; do
+		write_log "Checking if ${webcam_instance} ffmpeg recording is still running"
+		ffmpeg_instances=$(ps -aux | grep -v "su - ${OWNER_USER}" | grep ffmpeg | grep "${WEBCAM_INSTANCES_INFO[${webcam_instance}_FOLDER]}" | grep -v grep | wc -l)
+		echo "${ffmpeg_instances}"
+		if [[ "X${ffmpeg_instances}X" == "X0X" ]]; then
+			write_log "ffmpeg ${webcam_instance} instance is not running, launching again."
+			record_video "${WEBCAM_INSTANCES_INFO[${webcam_instance}_RTSP_URL]}" "${WEBCAM_INSTANCES_INFO[${webcam_instance}_FOLDER]}" "${webcam_instance}" &
+			>/dev/null 2>/dev/null
+		fi
+	done
 done
 
 write_log "End"

@@ -1,3 +1,21 @@
+windmaker-infiniterecorder (0.5-5) UNRELEASED; urgency=medium
+
+  * Change ffmpeg codec and check for ffmpeg dead instances
+
+ -- Álvaro Castellano Vela <alvaro.castellano.vela@gmail.com>  Mon, 31 Aug 2020 22:55:00 +0200
+
+windmaker-infiniterecorder (0.5-4) UNRELEASED; urgency=medium
+
+  * Fix ffmpeg command
+
+ -- Álvaro Castellano Vela <alvaro.castellano.vela@gmail.com>  Mon, 31 Aug 2020 22:55:00 +0200
+
+windmaker-infiniterecorder (0.5-3) UNRELEASED; urgency=medium
+
+  * Improve child processes termination
+
+ -- Álvaro Castellano Vela <alvaro.castellano.vela@gmail.com>  Mon, 31 Aug 2020 20:22:00 +0200
+
 windmaker-infiniterecorder (0.5-2) UNRELEASED; urgency=medium
 
   * Fix windmaker-infiniterecorder-video-manager delete config
