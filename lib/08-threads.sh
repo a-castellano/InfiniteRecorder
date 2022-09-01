@@ -22,7 +22,7 @@ source lib/08-log.sh
 
 function kill_threads {
 	write_log "Killing recording processes"
-	for job_to_kill in $(ps -aux | grep -E "^${OWNER_USER}" | grep ffmpeg | grep "${RECORDING_FOLDER}" |awk '{print $2}'); do
+	for job_to_kill in $(ps -aux | grep -E "^${OWNER_USER}" | grep ffmpeg | grep "${RECORDING_FOLDER}" | awk '{print $2}'); do
 		kill -9 ${job_to_kill}
 	done
 }
