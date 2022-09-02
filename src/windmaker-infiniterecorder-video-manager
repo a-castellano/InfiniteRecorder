@@ -52,6 +52,11 @@ else
 		fi
 	done
 
+  if [[ "${abort_script}" = true ]]; then
+  	write_log "Aborting execucion"
+  	exit 1
+  fi
+
 	write_log "Deleting raw videos older than required time"
 
 	find ${RECORDING_FOLDER} -type f -iwholename "*raw/*.mp4" -cmin +${RAW_VIDEO_DELETE_TIME} -delete
