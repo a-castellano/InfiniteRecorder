@@ -37,6 +37,7 @@ else
 	required_variables=(
 		'recording-folder'
 		'raw-video-delete-time'
+		'merge-video-files'
 	)
 
 	abort_script=false
@@ -60,5 +61,38 @@ else
 	write_log "Deleting raw videos older than required time"
 
 	find ${RECORDING_FOLDER} -type f -iwholename "*raw/*.mp4" -cmin +${RAW_VIDEO_DELETE_TIME} -delete
+
+
+write_log "Listing instances"
+instances=$(ls -ld ${RECORDING_FOLDER}/* | awk '{print $9}')
+file_list_limit=$((${MERGE_VIDEO_FILES} + 1))
+for instance in ${instances}; do
+	echo "instance ${instance}"
+	mkdir -p ${instance}/merged
+	mkdir -p ${instance}/reduced
+if [ -f "${instance}/last_merge" ]; then
+	echo "Exists"
+else
+	echo "file_list_limit ${file_list_limit}"
+	available_files=$(ls -lrt ${instance}/raw/*.mp4 | awk '{print $9}' | head -n ${file_list_limit} | wc -l)
+	echo "available_files ${available_files}"
+	if [[ "X${available_files}X" == "X${file_list_limit}X" ]]; then
+		readarray -t files_to_merge < <(ls -lrt ${instance}/raw/*.mp4 | awk '{print $9}' | head -n ${MERGE_VIDEO_FILES})
+		echo "${files_to_merge[@]}"
+		echo "__________"
+		merged_file_name=$(basename "${files_to_merge[0]}")
+		last_video_date=$(stat -c %Y "${files_to_merge[-1]}")
+		write_log "Merging video selection"
+		videos_to_merge_file=$(mktemp)
+		printf "file %s\n" "${files_to_merge[@]}" > ${videos_to_merge_file}
+		cat ${videos_to_merge_file}
+		ffmpeg -f concat -safe 0 -i ${videos_to_merge_file} -c copy "${instance}/merged/${merged_file_name}"
+		rm -f ${videos_to_merge_file}
+	else
+		write_log "Not enough files to combine"
+
+	fi
+fi
+done
 
 fi
