@@ -18,6 +18,7 @@
 
 source lib/01-log.sh
 source lib/02-variable-management.sh
+source lib/07-ffmpeg.sh
 
 ###################
 ###     Main    ###
@@ -65,34 +66,26 @@ else
 
 write_log "Listing instances"
 instances=$(ls -ld ${RECORDING_FOLDER}/* | awk '{print $9}')
-file_list_limit=$((${MERGE_VIDEO_FILES} + 1))
-for instance in ${instances}; do
-	echo "instance ${instance}"
-	mkdir -p ${instance}/merged
-	mkdir -p ${instance}/reduced
-if [ -f "${instance}/last_merge" ]; then
-	echo "Exists"
-else
-	echo "file_list_limit ${file_list_limit}"
-	available_files=$(ls -lrt ${instance}/raw/*.mp4 | awk '{print $9}' | head -n ${file_list_limit} | wc -l)
-	echo "available_files ${available_files}"
-	if [[ "X${available_files}X" == "X${file_list_limit}X" ]]; then
-		readarray -t files_to_merge < <(ls -lrt ${instance}/raw/*.mp4 | awk '{print $9}' | head -n ${MERGE_VIDEO_FILES})
-		echo "${files_to_merge[@]}"
-		echo "__________"
-		merged_file_name=$(basename "${files_to_merge[0]}")
-		last_video_date=$(stat -c %Y "${files_to_merge[-1]}")
-		write_log "Merging video selection"
-		videos_to_merge_file=$(mktemp)
-		printf "file %s\n" "${files_to_merge[@]}" > ${videos_to_merge_file}
-		cat ${videos_to_merge_file}
-		ffmpeg -f concat -safe 0 -i ${videos_to_merge_file} -c copy "${instance}/merged/${merged_file_name}"
-		rm -f ${videos_to_merge_file}
-	else
-		write_log "Not enough files to combine"
+FILE_LIST_LIMIT=$((${MERGE_VIDEO_FILES} + 1))
+while true; do
 
-	fi
-fi
+write_log "Lauching combine and reduce jobs in parallel"
+declare -a combine_and_reduce_jobs
+
+for instance in ${instances}; do
+	write_log "Ensure that ${instance}/merged exists"
+	mkdir -p ${instance}/merged
+	write_log "Ensure that ${instance}/reduces exists"
+	mkdir -p ${instance}/reduced
+	combine_and_reduce_videos "${instance}" &
+	combine_and_reduce_job=$!
+	combine_and_reduce_jobs+=(${combine_and_reduce_job})
+done
+write_log "Waiting from combine and reduce jobs to finnish"
+for combine_and_reduce_job in ${combine_and_reduce_jobs[@]}; do
+	wait ${combine_and_reduce_job}
+done
+sleep 10
 done
 
 fi
