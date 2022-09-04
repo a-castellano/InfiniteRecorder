@@ -1,3 +1,9 @@
+windmaker-infiniterecorder (0.6-1) UNRELEASED; urgency=medium
+
+  * Combine and reduce videos
+
+ -- Álvaro Castellano Vela <alvaro.castellano.vela@gmail.com>  Sun, 04 Sep 2022 20:57:00 +0200
+
 windmaker-infiniterecorder (0.5-6) UNRELEASED; urgency=medium
 
   * Change ffmpeg codec to libx264 again

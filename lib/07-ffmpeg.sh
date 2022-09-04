@@ -66,7 +66,6 @@ ffmpeg -y -i $1 -c copy  -map 0 -f segment -segment_time ${VIDEO_LENGTH} -segmen
 	su - "${OWNER_USER}" -s /bin/bash -c "${record_vide_command}" 2>/dev/null >/dev/null
 }
 
-
 # combine_and_reducr_videos
 #
 # combines videos and reduce combined copy size
@@ -77,27 +76,27 @@ ffmpeg -y -i $1 -c copy  -map 0 -f segment -segment_time ${VIDEO_LENGTH} -segmen
 
 function combine_and_reduce_videos {
 	instance="$1"
-        START_FILE=""
-if [ -f "${instance}/last_merge" ]; then
-        START_FILE=" -newer ${instance}/last_merge"
-fi
-        available_files=$(find ${instance}/raw/ ${START_FILE} -iname "*.mp4" -type f -printf "%T@  %p\n" | sort -n  | awk '{print $2}' | head -n ${FILE_LIST_LIMIT} | wc -l)
-        if [[ "X${available_files}X" == "X${FILE_LIST_LIMIT}X" ]]; then
-                readarray -t files_to_merge < <(find ${instance}/raw/ ${START_FILE} -iname "*.mp4" -type f -printf "%T@  %p\n" | sort -n  | awk '{print $2}' | head -n ${MERGE_VIDEO_FILES})
-                merged_file_name=$(basename "${files_to_merge[0]}")
-                #last_video_date=$(stat -c %Y "${files_to_merge[-1]}")
-                write_log "Setting last video merget time"
-                touch "${instance}/last_merge" -r "${files_to_merge[-1]}"
-                write_log "Merging video selection to ${instance}/merged/${merged_file_name}"
-                videos_to_merge_file=$(mktemp)
-                printf "file %s\n" "${files_to_merge[@]}" > ${videos_to_merge_file}
-                ffmpeg -f concat -safe 0 -i ${videos_to_merge_file} -c copy "${instance}/merged/${merged_file_name}" > /dev/null 2> /dev/null
-                rm -f ${videos_to_merge_file}
-                write_log "Reducing merged video to ${instance}/reduced/${merged_file_name}"
-                ffmpeg -hwaccel vaapi -vaapi_device /dev/dri/renderD128 -i "${instance}/merged/${merged_file_name}"  -vcodec libx264 -crf 40 -preset ultrafast -tune fastdecode "${instance}/reduced/${merged_file_name}" > /dev/null 2> /dev/null
-								write_log "Video comination for file ${instance}/merged/${merged_file_name} ended"
-        else
-                write_log "Not enough files to combine"
+	START_FILE=""
+	if [ -f "${instance}/last_merge" ]; then
+		START_FILE=" -newer ${instance}/last_merge"
+	fi
+	available_files=$(find ${instance}/raw/ ${START_FILE} -iname "*.mp4" -type f -printf "%T@  %p\n" | sort -n | awk '{print $2}' | head -n ${FILE_LIST_LIMIT} | wc -l)
+	if [[ "X${available_files}X" == "X${FILE_LIST_LIMIT}X" ]]; then
+		readarray -t files_to_merge < <(find ${instance}/raw/ ${START_FILE} -iname "*.mp4" -type f -printf "%T@  %p\n" | sort -n | awk '{print $2}' | head -n ${MERGE_VIDEO_FILES})
+		merged_file_name=$(basename "${files_to_merge[0]}")
+		#last_video_date=$(stat -c %Y "${files_to_merge[-1]}")
+		write_log "Setting last video merget time"
+		touch "${instance}/last_merge" -r "${files_to_merge[-1]}"
+		write_log "Merging video selection to ${instance}/merged/${merged_file_name}"
+		videos_to_merge_file=$(mktemp)
+		printf "file %s\n" "${files_to_merge[@]}" >${videos_to_merge_file}
+		ffmpeg -f concat -safe 0 -i ${videos_to_merge_file} -c copy "${instance}/merged/${merged_file_name}" >/dev/null 2>/dev/null
+		rm -f ${videos_to_merge_file}
+		write_log "Reducing merged video to ${instance}/reduced/${merged_file_name}"
+		ffmpeg -hwaccel vaapi -vaapi_device /dev/dri/renderD128 -i "${instance}/merged/${merged_file_name}" -vcodec libx264 -crf 40 -preset ultrafast -tune fastdecode "${instance}/reduced/${merged_file_name}" >/dev/null 2>/dev/null
+		write_log "Video comination for file ${instance}/merged/${merged_file_name} ended"
+	else
+		write_log "Not enough files to combine"
 
-				fi
+	fi
 }
