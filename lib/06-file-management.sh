@@ -31,7 +31,7 @@ function create_recording_folders {
 			write_log "Folder ${folder_name} created"
 		else
 			found_errors=true
-			write_log "Caanot create folder ${folder_name}"
+			write_log "Cannot create folder ${folder_name}"
 		fi
 
 	done

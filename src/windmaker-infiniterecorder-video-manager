@@ -78,7 +78,7 @@ else
 		for instance in ${instances}; do
 			write_log "Ensure that ${instance}/merged exists"
 			mkdir -p ${instance}/merged
-			write_log "Ensure that ${instance}/reduces exists"
+			write_log "Ensure that ${instance}/reduced exists"
 			mkdir -p ${instance}/reduced
 			combine_and_reduce_videos "${instance}" &
 			combine_and_reduce_job=$!
@@ -88,7 +88,7 @@ else
 		for combine_and_reduce_job in ${combine_and_reduce_jobs[@]}; do
 			wait ${combine_and_reduce_job}
 		done
-		sleep 10
+		sleep 1
 	done
 
 fi

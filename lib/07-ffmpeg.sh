@@ -66,7 +66,7 @@ ffmpeg -y -i $1 -c copy  -map 0 -f segment -segment_time ${VIDEO_LENGTH} -segmen
 	su - "${OWNER_USER}" -s /bin/bash -c "${record_vide_command}" 2>/dev/null >/dev/null
 }
 
-# combine_and_reducr_videos
+# combine_and_reduce_videos
 #
 # combines videos and reduce combined copy size
 #
@@ -84,21 +84,26 @@ function combine_and_reduce_videos {
 	if [[ "X${available_files}X" == "X${FILE_LIST_LIMIT}X" ]]; then
 		readarray -t files_to_merge < <(find ${instance}/raw/ ${START_FILE} -iname "*.mp4" -type f -printf "%T@  %p\n" | sort -n | awk '{print $2}' | head -n ${MERGE_VIDEO_FILES})
 		merged_file_name=$(basename "${files_to_merge[0]}")
-		#last_video_date=$(stat -c %Y "${files_to_merge[-1]}")
+		last_video_date=$(stat -c %Y "${files_to_merge[-1]}")
+		video_year=$(date -d @${last_video_date} +'%Y')
+		video_month=$(date -d @${last_video_date} +'%m')
+		video_day=$(date -d @${last_video_date} +'%d')
+		video_hour=$(date -d @${last_video_date} +'%H')
 		write_log "Setting last video merget time"
 		touch "${instance}/last_merge" -r "${files_to_merge[-1]}"
-		write_log "Merging video selection to ${instance}/merged/${merged_file_name}"
+		mkdir -p ${instance}/merged/${video_year}/${video_month}/${video_day}/${video_hour}
+		mkdir -p ${instance}/reduced/${video_year}/${video_month}/${video_day}/${video_hour}
+		write_log "Merging video selection to ${instance}/merged/${video_year}/${video_month}/${video_day}/${video_hour}/${merged_file_name}"
 		videos_to_merge_file=$(mktemp)
 		printf "file %s\n" "${files_to_merge[@]}" >${videos_to_merge_file}
-		ffmpeg -f concat -safe 0 -i ${videos_to_merge_file} -c copy "${instance}/merged/${merged_file_name}" >/dev/null 2>/dev/null
+		ffmpeg -f concat -safe 0 -i ${videos_to_merge_file} -c copy "${instance}/merged/${video_year}/${video_month}/${video_day}/${video_hour}/${merged_file_name}" >/dev/null 2>/dev/null
 		rm -f ${videos_to_merge_file}
-		write_log "Reducing merged video to ${instance}/reduced/${merged_file_name}"
-		ffmpeg -hwaccel vaapi -vaapi_device /dev/dri/renderD128 -i "${instance}/merged/${merged_file_name}" -vcodec libx264 -crf 40 -preset ultrafast -tune fastdecode "${instance}/reduced/${merged_file_name}" >/dev/null 2>/dev/null
-		write_log "Video combination for file ${instance}/merged/${merged_file_name} ended"
-		chown ${OWNER_USER}:${OWNER_USER} "${instance}/merged/${merged_file_name}" 
-		chown ${OWNER_USER}:${OWNER_USER} "${instance}/reduced/${merged_file_name}" 
+		write_log "Reducing merged video to ${instance}/reduced/${video_year}/${video_month}/${video_day}/${video_hour}/${merged_file_name}"
+		ffmpeg -hwaccel vaapi -vaapi_device /dev/dri/renderD128 -i "${instance}/merged/${video_year}/${video_month}/${video_day}/${video_hour}/${merged_file_name}" -vcodec libx264 -crf 40 -preset ultrafast -tune fastdecode "${instance}/reduced/${video_year}/${video_month}/${video_day}/${video_hour}/${merged_file_name}" >/dev/null 2>/dev/null
+		write_log "Video combination for file ${instance}/merged/${video_year}/${video_month}/${video_day}/${video_hour}/${merged_file_name} ended"
+		chown ${OWNER_USER}:${OWNER_USER} -R "${instance}/merged" 
+		chown ${OWNER_USER}:${OWNER_USER} -R "${instance}/reduced" 
 	else
 		write_log "Not enough files to combine"
-
 	fi
 }
