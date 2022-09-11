@@ -25,7 +25,8 @@ function create_recording_folders {
 		folder_name="${WEBCAM_INSTANCES_INFO[${webcam_instance}_FOLDER]}"
 		write_log "Creating folder ${folder_name}"
 		create_folder_command="mkdir -p ${folder_name}"
-		su - "${OWNER_USER}" -s /bin/bash -c "${create_folder_command}" 2>/dev/null
+		mkdir -p ${folder_name}
+		chown -R ${OWNER_USER}:${OWNER_USER} ${folder_name}
 		error_code=$?
 		if [[ "X${error_code}X" == "X0X" ]]; then
 			write_log "Folder ${folder_name} created"
