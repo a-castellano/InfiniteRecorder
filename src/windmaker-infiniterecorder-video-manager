@@ -64,32 +64,10 @@ else
 	write_log "Listing instances"
 	instances=$(ls -ld ${RECORDING_FOLDER}/* | awk '{print $9}')
 	FILE_LIST_LIMIT=$((${MERGE_VIDEO_FILES} + 1))
-	while true; do
 
 	write_log "Deleting raw videos older than required time"
 
-	find ${RECORDING_FOLDER} -type f -iwholename "*reduced/*.mp4" -cmin +${REDUCED_VIDEO_DELETE_TIME} -delete
-	find ${RECORDING_FOLDER} -type f -iwholename "*merged/*.mp4" -cmin +${MERGED_VIDEO_DELETE_TIME} -delete
 	find ${RECORDING_FOLDER} -type f -iwholename "*raw/*.mp4" -cmin +${RAW_VIDEO_DELETE_TIME} -delete
-
-
-		write_log "Lauching combine and reduce jobs in parallel"
-		declare -a combine_and_reduce_jobs
-
-		for instance in ${instances}; do
-			write_log "Ensure that ${instance}/merged exists"
-			mkdir -p ${instance}/merged
-			write_log "Ensure that ${instance}/reduced exists"
-			mkdir -p ${instance}/reduced
-			combine_and_reduce_videos "${instance}" &
-			combine_and_reduce_job=$!
-			combine_and_reduce_jobs+=(${combine_and_reduce_job})
-		done
-		write_log "Waiting from combine and reduce jobs to finnish"
-		for combine_and_reduce_job in ${combine_and_reduce_jobs[@]}; do
-			wait ${combine_and_reduce_job}
-		done
-		sleep 1
-	done
+	find ${RECORDING_FOLDER} -type f -iwholename "*raw_reduced/*.mp4" -cmin +${RAW_VIDEO_DELETE_TIME} -delete
 
 fi
