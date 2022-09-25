@@ -76,7 +76,7 @@ ffmpeg -y -i $1 -c copy  -map 0 -f segment -segment_time ${VIDEO_LENGTH} -segmen
 # $3 -> webcam name
 #
 
-record_video_low_quality {
+function record_video_low_quality {
 	record_vide_command="
 ffmpeg -y -i $1 -map 0 -f segment -segment_time ${VIDEO_LENGTH} -segment_format mp4 -strftime 1 -reset_timestamps 1 -preset ultrafast -crf 40 -tune fastdecode \"$2/record-%Y-%m-%d_%H-%M-%S.mp4\" -vcodec libx264 -metadata title=\"$3\""
 
