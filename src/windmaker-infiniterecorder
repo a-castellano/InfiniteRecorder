@@ -150,7 +150,7 @@ while [ true ]; do
 		ffmpeg_instances=$(ps -aux | grep -v "su - ${OWNER_USER}" | grep ffmpeg | grep "${WEBCAM_INSTANCES_INFO[${webcam_instance}_FOLDER]}_reduced" | grep -v grep | wc -l)
 		if [[ "X${ffmpeg_instances}X" == "X0X" ]]; then
 			write_log "ffmpeg ${webcam_instance} low quality instance is not running, launching again."
-			record_video "${WEBCAM_INSTANCES_INFO[${webcam_instance}_RTSP_URL]}" "${WEBCAM_INSTANCES_INFO[${webcam_instance}_FOLDER]}_reduced" "${webcam_instance}" &
+			record_video_low_quality "${WEBCAM_INSTANCES_INFO[${webcam_instance}_RTSP_URL]}" "${WEBCAM_INSTANCES_INFO[${webcam_instance}_FOLDER]}_reduced" "${webcam_instance}" &
 			>/dev/null 2>/dev/null
 		fi
 
