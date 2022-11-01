@@ -126,6 +126,12 @@ for webcam_instance in ${WEBCAM_INSTANCES[@]}; do
 	>/dev/null 2>/dev/null
 	WEBCAM_INSTANCES_INFO[${webcam_instance}_THREAD]=$!
 	write_log "${webcam_instance} thread id is ${WEBCAM_INSTANCES_INFO[${webcam_instance}_THREAD]}"
+	write_log "Lauching record low quality video thread for ${webcam_instance}"p
+	record_video_low_quality "${WEBCAM_INSTANCES_INFO[${webcam_instance}_RTSP_URL]}" "${WEBCAM_INSTANCES_INFO[${webcam_instance}_FOLDER]}_reduced" "${webcam_instance}" &
+	>/dev/null 2>/dev/null
+	WEBCAM_INSTANCES_INFO[${webcam_instance}_THREAD_REDUCED]=$!
+	write_log "${webcam_instance} low quality thread id is ${WEBCAM_INSTANCES_INFO[${webcam_instance}_THREAD_REDUCED]}"
+
 done
 
 # Check if ffmpeg instances are still running
@@ -134,12 +140,20 @@ while [ true ]; do
 	for webcam_instance in ${WEBCAM_INSTANCES[@]}; do
 		write_log "Checking if ${webcam_instance} ffmpeg recording is still running"
 		ffmpeg_instances=$(ps -aux | grep -v "su - ${OWNER_USER}" | grep ffmpeg | grep "${WEBCAM_INSTANCES_INFO[${webcam_instance}_FOLDER]}" | grep -v grep | wc -l)
-		echo "${ffmpeg_instances}"
 		if [[ "X${ffmpeg_instances}X" == "X0X" ]]; then
 			write_log "ffmpeg ${webcam_instance} instance is not running, launching again."
 			record_video "${WEBCAM_INSTANCES_INFO[${webcam_instance}_RTSP_URL]}" "${WEBCAM_INSTANCES_INFO[${webcam_instance}_FOLDER]}" "${webcam_instance}" &
 			>/dev/null 2>/dev/null
 		fi
+
+		write_log "Checking if ${webcam_instance} ffmpeg low quality recording is still running"
+		ffmpeg_instances=$(ps -aux | grep -v "su - ${OWNER_USER}" | grep ffmpeg | grep "${WEBCAM_INSTANCES_INFO[${webcam_instance}_FOLDER]}_reduced" | grep -v grep | wc -l)
+		if [[ "X${ffmpeg_instances}X" == "X0X" ]]; then
+			write_log "ffmpeg ${webcam_instance} low quality instance is not running, launching again."
+			record_video_low_quality "${WEBCAM_INSTANCES_INFO[${webcam_instance}_RTSP_URL]}" "${WEBCAM_INSTANCES_INFO[${webcam_instance}_FOLDER]}_reduced" "${webcam_instance}" &
+			>/dev/null 2>/dev/null
+		fi
+
 	done
 done
 

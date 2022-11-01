@@ -1,3 +1,23 @@
+windmaker-infiniterecorder (0.8-3) UNRELEASED; urgency=medium
+
+  * Fix error, high quality video function was spawned after low one failed.
+
+ -- Álvaro Castellano Vela <alvaro.castellano.vela@gmail.com>  Mon, 26 Sep 2022 22:57:00 +0200
+
+
+windmaker-infiniterecorder (0.8-2) UNRELEASED; urgency=medium
+
+  * Fix typo
+
+ -- Álvaro Castellano Vela <alvaro.castellano.vela@gmail.com>  Sun, 25 Sep 2022 02:50:00 +0200
+
+windmaker-infiniterecorder (0.8-1) UNRELEASED; urgency=medium
+
+  * Record quality and low quality videos for each instance
+  * Do not merge and reduce videos in former cron task, remove old videos only
+
+ -- Álvaro Castellano Vela <alvaro.castellano.vela@gmail.com>  Sun, 25 Sep 2022 02:50:00 +0200
+
 windmaker-infiniterecorder (0.7-2) UNRELEASED; urgency=medium
 
   * Fix old videos deletion

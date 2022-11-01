@@ -24,9 +24,7 @@ function create_recording_folders {
 	for webcam_instance in ${WEBCAM_INSTANCES[@]}; do
 		folder_name="${WEBCAM_INSTANCES_INFO[${webcam_instance}_FOLDER]}"
 		write_log "Creating folder ${folder_name}"
-		create_folder_command="mkdir -p ${folder_name}"
 		mkdir -p ${folder_name}
-		chown -R ${OWNER_USER}:${OWNER_USER} ${folder_name}
 		error_code=$?
 		if [[ "X${error_code}X" == "X0X" ]]; then
 			write_log "Folder ${folder_name} created"
@@ -34,7 +32,31 @@ function create_recording_folders {
 			found_errors=true
 			write_log "Cannot create folder ${folder_name}"
 		fi
+		mkdir -p ${folder_name}_reduced
+		error_code=$?
+		if [[ "X${error_code}X" == "X0X" ]]; then
+			write_log "Folder ${folder_name}_reduced created"
+		else
+			found_errors=true
+			write_log "Cannot create folder ${folder_name}_reduced"
+		fi
 
+		chown -R ${OWNER_USER}:${OWNER_USER} ${folder_name}
+		error_code=$?
+		if [[ "X${error_code}X" == "X0X" ]]; then
+			write_log "Folder ${folder_name} owner changed"
+		else
+			found_errors=true
+			write_log "Cannot change ${folder_name} ownwer"
+		fi
+		chown -R ${OWNER_USER}:${OWNER_USER} ${folder_name}_reduced
+		error_code=$?
+		if [[ "X${error_code}X" == "X0X" ]]; then
+			write_log "Folder ${folder_name}_reduced owner changed"
+		else
+			found_errors=true
+			write_log "Cannot change ${folder_name}_reduced ownwer"
+		fi
 	done
 	if [ "$found_errors" = false ]; then
 		return 1
