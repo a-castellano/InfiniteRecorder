@@ -57,13 +57,14 @@ function take_snapshots {
 # $1 -> rtsp url
 # $2 -> recording folder
 # $3 -> webcam name
+# $4 and beyond -> ffmpeg options
 #
 
 function record_video {
-	record_vide_command="
-ffmpeg -y -i $1 -c copy  -map 0 -f segment -segment_time ${VIDEO_LENGTH} -segment_format mp4 -strftime 1 -reset_timestamps 1 \"$2/record-%Y-%m-%d_%H-%M-%S.mp4\" -vcodec libx264 -metadata title=\"$3\""
+	record_video_command="
+ffmpeg -y -i '$1' ${@:4} -map 0 -f segment -segment_time ${VIDEO_LENGTH} -segment_format mp4 -strftime 1 -reset_timestamps 1 \"$2/record-%Y-%m-%d_%H-%M-%S.mp4\" -vcodec libx264 -metadata title=\"$3\""
 
-	su - "${OWNER_USER}" -s /bin/bash -c "${record_vide_command}" 2>/dev/null >/dev/null
+	su - "${OWNER_USER}" -s /bin/bash -c "${record_video_command}" 2>/dev/null >/dev/null
 }
 
 # record_video_low_quality
@@ -74,13 +75,14 @@ ffmpeg -y -i $1 -c copy  -map 0 -f segment -segment_time ${VIDEO_LENGTH} -segmen
 # $1 -> rtsp url
 # $2 -> recording folder
 # $3 -> webcam name
+# $4 and beyond -> ffmpeg options
 #
 
 function record_video_low_quality {
-	record_vide_command="
-ffmpeg -y -i $1 -map 0 -f segment -segment_time ${VIDEO_LENGTH} -segment_format mp4 -strftime 1 -reset_timestamps 1 -preset ultrafast -crf 40 -tune fastdecode \"$2/record-%Y-%m-%d_%H-%M-%S.mp4\" -vcodec libx264 -metadata title=\"$3\""
+	record_video_command="
+ffmpeg -y -i '$1' -map 0 -f segment -segment_time ${VIDEO_LENGTH} -segment_format mp4 -strftime 1 -reset_timestamps 1 -preset ultrafast -crf 40 -tune fastdecode \"$2/record-%Y-%m-%d_%H-%M-%S.mp4\" -vcodec libx264 -metadata title=\"$3\""
 
-	su - "${OWNER_USER}" -s /bin/bash -c "${record_vide_command}" 2>/dev/null >/dev/null
+	su - "${OWNER_USER}" -s /bin/bash -c "${record_video_command}" 2>/dev/null >/dev/null
 }
 
 

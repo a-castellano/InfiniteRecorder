@@ -45,6 +45,7 @@ function get_webcams_info {
 		WEBCAM_INSTANCES_INFO[${webcam_instance}_IP]=$(jq -r '.[] | .ServiceAddress' ${JSON_INFO})
 		WEBCAM_INSTANCES_INFO[${webcam_instance}_PORT]=$(jq -r '.[] | .ServiceMeta.streamPort' ${JSON_INFO})
 		WEBCAM_INSTANCES_INFO[${webcam_instance}_URL]=$(jq -r '.[] | .ServiceMeta.stramURL' ${JSON_INFO})
+		WEBCAM_INSTANCES_INFO[${webcam_instance}_FFMPEG_OPTIONS]=$(jq -r '.[] | .ServiceMeta.ffmpegExtraOptions' ${JSON_INFO})
 		rm -f ${JSON_INFO}
 		write_log "Retrieving webcam '${webcam_instance}' credentials."
 		WEBCAM_INSTANCES_INFO[${webcam_instance}_USER]=$(curl -s -X GET -H 'Content-Type: application/json' -H "X-Vault-Token: ${VAULT_ACESS_TOKEN}" https://${VAULT_SERVER}/v1/kv/data/webcam/${webcam_instance} -k | jq -r '.data.data.user')
