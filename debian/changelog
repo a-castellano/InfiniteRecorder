@@ -1,3 +1,9 @@
+windmaker-infiniterecorder (0.9-1) UNRELEASED; urgency=medium
+
+  * Get some ffmpeg extra options from consul
+
+ -- Álvaro Castellano Vela <alvaro.castellano.vela@gmail.com>  Tue, 01 Nov 2022 18:04:00 +0200
+
 windmaker-infiniterecorder (0.8-3) UNRELEASED; urgency=medium
 
   * Fix error, high quality video function was spawned after low one failed.
