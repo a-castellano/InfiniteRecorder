@@ -64,30 +64,9 @@ function take_snapshots {
 
 function record_video {
 	record_video_command="
-ffmpeg -y -i '$1' ${@:4} -map 0 -f segment -segment_time ${VIDEO_LENGTH} -segment_format mp4 -strftime 1 -reset_timestamps 1 \"$2/record-%Y-%m-%d_%H-%M-%S.mp4\" -vcodec libx264 -metadata title=\"$4\" -map 0 -f segment -segment_time ${VIDEO_LENGTH} -segment_format mp4 -strftime 1 -reset_timestamps 1 -preset ultrafast -crf 40 -tune fastdecode \"$3/record-%Y-%m-%d_%H-%M-%S.mp4\" -vcodec libx264 -metadata title=\"$4\""
-
+ffmpeg -y -i '$1' ${@:5} -map 0 -f segment -segment_time ${VIDEO_LENGTH} -segment_format mp4 -strftime 1 -reset_timestamps 1 \"$2/record-%Y-%m-%d_%H-%M-%S.mp4\" -vcodec libx264 -metadata title=\"$4\" -strftime 1 -reset_timestamps 1 -preset ultrafast -crf 40 -tune fastdecode \"$3/record-%Y-%m-%d_%H-%M-%S.mp4\" -vcodec libx264 -metadata title=\"$4\""
 	su - "${OWNER_USER}" -s /bin/bash -c "${record_video_command}" 2>/dev/null >/dev/null
 }
-
-# record_video_low_quality
-#
-# records cam streaming in chunks, with low quality
-#
-# Args
-# $1 -> rtsp url
-# $2 -> recording folder
-# $3 -> webcam name
-# $4 and beyond -> ffmpeg options
-#
-
-function record_video_low_quality {
-	record_video_command="
-ffmpeg -y -i '$1' -map 0 -f segment -segment_time ${VIDEO_LENGTH} -segment_format mp4 -strftime 1 -reset_timestamps 1 -preset ultrafast -crf 40 -tune fastdecode \"$2/record-%Y-%m-%d_%H-%M-%S.mp4\" -vcodec libx264 -metadata title=\"$3\""
-
-	su - "${OWNER_USER}" -s /bin/bash -c "${record_video_command}" 2>/dev/null >/dev/null
-}
-
-
 
 # combine_and_reduce_videos
 #
