@@ -52,17 +52,19 @@ function take_snapshots {
 # record_video
 #
 # records cam streaming in chunks
+# Video is recoring in two simultaneous outputs
 #
 # Args
 # $1 -> rtsp url
 # $2 -> recording folder
-# $3 -> webcam name
-# $4 and beyond -> ffmpeg options
+# $3 -> reduced recording folder
+# $4 -> webcam name
+# $5 and beyond -> ffmpeg options
 #
 
 function record_video {
 	record_video_command="
-ffmpeg -y -i '$1' ${@:4} -map 0 -f segment -segment_time ${VIDEO_LENGTH} -segment_format mp4 -strftime 1 -reset_timestamps 1 \"$2/record-%Y-%m-%d_%H-%M-%S.mp4\" -vcodec libx264 -metadata title=\"$3\""
+ffmpeg -y -i '$1' ${@:4} -map 0 -f segment -segment_time ${VIDEO_LENGTH} -segment_format mp4 -strftime 1 -reset_timestamps 1 \"$2/record-%Y-%m-%d_%H-%M-%S.mp4\" -vcodec libx264 -metadata title=\"$4\" -map 0 -f segment -segment_time ${VIDEO_LENGTH} -segment_format mp4 -strftime 1 -reset_timestamps 1 -preset ultrafast -crf 40 -tune fastdecode \"$3/record-%Y-%m-%d_%H-%M-%S.mp4\" -vcodec libx264 -metadata title=\"$4\""
 
 	su - "${OWNER_USER}" -s /bin/bash -c "${record_video_command}" 2>/dev/null >/dev/null
 }
