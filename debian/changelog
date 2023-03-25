@@ -1,3 +1,9 @@
+windmaker-infiniterecorder (0.9-5) UNRELEASED; urgency=medium
+
+  * Fix record command
+
+ -- Álvaro Castellano Vela <alvaro.castellano.vela@gmail.com>  Sat, 25 Nov 2022 01:09:00 +0200
+
 windmaker-infiniterecorder (0.9-4) UNRELEASED; urgency=medium
 
   * Fix record command
