@@ -29,3 +29,12 @@ function kill_threads {
 
 # Trap SIGTERM signal for killing threads
 trap 'kill_threads' SIGTERM
+
+# force_ffmpeg_kill
+#
+# kills all fmpeg threads
+
+function kill_threads {
+	write_log "Killing all ffmpeg processes"
+	pkill -9 ffmpeg
+}
