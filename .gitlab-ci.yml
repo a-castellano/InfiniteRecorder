@@ -3,7 +3,7 @@ stages:
 
 build_package:
   stage: build
-  image: registry.windmaker.net:5005/a-castellano/limani/base_deb_golang_1_17_builder:202301231808
+  image: registry.windmaker.net:5005/a-castellano/limani/base_deb_golang_1_20_builder:202307291307
   script:
     - dpkg-buildpackage -uc -b
     - mkdir deb_package
