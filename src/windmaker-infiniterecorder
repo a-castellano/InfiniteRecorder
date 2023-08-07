@@ -131,21 +131,11 @@ done
 
 # Check if ffmpeg instances are still running
 while [ true ]; do
-	sleep 10
-	for webcam_instance in ${WEBCAM_INSTANCES[@]}; do
-		write_log "Checking if ${webcam_instance} ffmpeg recording is still running"
-		ffmpeg_instances=$(ps -aux | grep -v "su - ${OWNER_USER}" | grep ffmpeg | grep "${WEBCAM_INSTANCES_INFO[${webcam_instance}_FOLDER]}" | grep -v grep | wc -l)
-		if [[ "X${ffmpeg_instances}X" == "X0X" ]]; then
-			write_log "ffmpeg ${webcam_instance} instance is not running, launching again."
-			record_video "${WEBCAM_INSTANCES_INFO[${webcam_instance}_RTSP_URL]}" "${WEBCAM_INSTANCES_INFO[${webcam_instance}_FOLDER]}" "${WEBCAM_INSTANCES_INFO[${webcam_instance}_FOLDER]}_reduced" "${webcam_instance}" "${WEBCAM_INSTANCES_INFO[${webcam_instance}_FFMPEG_OPTIONS]}" &
-			>/dev/null 2>/dev/null
-		fi
-
-	done
 
 	# For each webcam, check if videos are being generated
 	for webcam_instance in ${WEBCAM_INSTANCES[@]}; do
-
+		# Check reduced videos after waiting one minute
+		sleep 60
 		created_raw_videos=$(find "${WEBCAM_INSTANCES_INFO[${webcam_instance}_FOLDER]}" -type f -cmin -1 | wc -l)
 		if [[ "X${created_raw_videos}X" == "X0X" ]]; then
 			write_log "No videos in ${WEBCAM_INSTANCES_INFO[${webcam_instance}_FOLDER]} during last minute."
@@ -161,6 +151,22 @@ while [ true ]; do
 		fi
 
 	done
+
+	sleep 60
+
+	for webcam_instance in ${WEBCAM_INSTANCES[@]}; do
+		write_log "Checking if ${webcam_instance} ffmpeg recording is still running"
+		ffmpeg_instances=$(ps -aux | grep -v "su - ${OWNER_USER}" | grep ffmpeg | grep "${WEBCAM_INSTANCES_INFO[${webcam_instance}_FOLDER]}" | grep -v grep | wc -l)
+		if [[ "X${ffmpeg_instances}X" == "X0X" ]]; then
+			write_log "ffmpeg ${webcam_instance} instance is not running, launching again."
+			record_video "${WEBCAM_INSTANCES_INFO[${webcam_instance}_RTSP_URL]}" "${WEBCAM_INSTANCES_INFO[${webcam_instance}_FOLDER]}" "${WEBCAM_INSTANCES_INFO[${webcam_instance}_FOLDER]}_reduced" "${webcam_instance}" "${WEBCAM_INSTANCES_INFO[${webcam_instance}_FFMPEG_OPTIONS]}" &
+			>/dev/null 2>/dev/null
+		fi
+
+		sleep 60
+	done
+
+	sleep 120
 done
 
 write_log "End"
