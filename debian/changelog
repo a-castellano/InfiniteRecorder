@@ -1,3 +1,9 @@
+windmaker-infiniterecorder (0.9-7) UNRELEASED; urgency=medium
+
+  * Wait before killing ffmpeg and force restart if any video file is not being created. 
+
+ -- Álvaro Castellano Vela <alvaro.castellano.vela@gmail.com>  Mon, 07 Aug 2023 15:14:00 +0200
+
 windmaker-infiniterecorder (0.9-6) UNRELEASED; urgency=medium
 
   * Kill ffmpeg and force restart if any video file is not being created. 

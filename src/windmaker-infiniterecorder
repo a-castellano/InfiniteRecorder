@@ -151,7 +151,8 @@ while [ true ]; do
 			write_log "No videos in ${WEBCAM_INSTANCES_INFO[${webcam_instance}_FOLDER]} during last minute."
 			kill_threads
 		else
-			# Check reduced videos
+			# Check reduced videos after waiting one minute
+			sleep 60
 			created_raw_reduced_videos=$(find "${WEBCAM_INSTANCES_INFO[${webcam_instance}_FOLDER]}_reduced" -type f -cmin -1 | wc -l)
 			if [[ "X${created_raw_videos}X" == "X0X" ]]; then
 				write_log "No videos in ${WEBCAM_INSTANCES_INFO[${webcam_instance}_FOLDER]}_reduced during last minute."
