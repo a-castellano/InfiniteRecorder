@@ -103,8 +103,8 @@ function combine_and_reduce_videos {
 		write_log "Reducing merged video to ${instance}/reduced/${video_year}/${video_month}/${video_day}/${video_hour}/${merged_file_name}"
 		ffmpeg -hwaccel vaapi -vaapi_device /dev/dri/renderD128 -i "${instance}/merged/${video_year}/${video_month}/${video_day}/${video_hour}/${merged_file_name}" -vcodec libx264 -crf 40 -preset ultrafast -tune fastdecode "${instance}/reduced/${video_year}/${video_month}/${video_day}/${video_hour}/${merged_file_name}" >/dev/null 2>/dev/null
 		write_log "Video combination for file ${instance}/merged/${video_year}/${video_month}/${video_day}/${video_hour}/${merged_file_name} ended"
-		chown ${OWNER_USER}:${OWNER_USER} -R "${instance}/merged" 
-		chown ${OWNER_USER}:${OWNER_USER} -R "${instance}/reduced" 
+		chown ${OWNER_USER}:${OWNER_USER} -R "${instance}/merged"
+		chown ${OWNER_USER}:${OWNER_USER} -R "${instance}/reduced"
 	else
 		write_log "Not enough files to combine"
 	fi

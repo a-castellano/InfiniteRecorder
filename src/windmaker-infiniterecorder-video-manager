@@ -18,7 +18,7 @@
 
 source lib/01-log.sh
 source lib/02-variable-management.sh
-source lib/07-ffmpeg.sh
+source lib/04-ffmpeg.sh
 
 ###################
 ###     Main    ###
