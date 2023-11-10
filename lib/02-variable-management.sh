@@ -37,7 +37,7 @@ function check_required_variable {
 function check_webcam_info {
 	webcam_instance=$1
 	error_code=1
-	for required_property in "IP" "PORT" "URL" "FFMPEG_OPTIONS" "USER" "PASSWORD"; do
+	for required_property in "IP" "PORT" "RTSP_URL" "FFMPEG_OPTIONS" "USER" "PASSWORD"; do
 		if [[ ! -v "WEBCAM_INSTANCES_INFO[${webcam_instance}_${required_property}]" ]]; then
 			write_log "WEBCAM_INSTANCES_INFO[${webcam_instance}_${required_property}] is not set."
 			error_code=0

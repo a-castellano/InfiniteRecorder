@@ -38,9 +38,7 @@ else
 	required_variables=(
 		'recording-folder'
 		'raw-video-delete-time'
-		'merged-video-delete-time'
 		'reduced-video-delete-time'
-		'merge-video-files'
 	)
 
 	abort_script=false

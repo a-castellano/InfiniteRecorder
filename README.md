@@ -30,71 +30,31 @@ Look for letest artifact generated in [Repo CI Pipelines](https://git.windmaker.
 
 *windmaker-infiniterecorder* will look for config file placed in */etc/default/windmaker-infiniterecorder*
 ```bash
-VIDEO_LENGTH="0:15" # Lenght of chunk videos
+#!/bin/bash
+
+VIDEO_LENGTH="0:15"
 OWNER_USER="alvaro"
 RECORDING_FOLDER="/home/alvaro/recordings"
-# WebCam and Vault cluster Info is available inside a consul cluster
-CONSUL_CLUSTER="consul01.windmaker.net,consul02.windmaker.net,consul03.windmaker.net"
-CONSUL_PORT=8500
-WEBCAM_CONSUL_TOKEN="Consul_TOKEN"
-VAULT_CONSUL_TOKEN="Consul_TOKEN"
-VAULT_USER="readwebcamsecrets"
-VAULT_PASSWORD="vault_password"
-RAW_VIDEO_DELETE_TIME=600
-REDUCED_VIDEO_DELETE_TIME=2160
-```
+RAW_VIDEO_DELETE_TIME=480
+REDUCED_VIDEO_DELETE_TIME=480
+WEBCAM_INSTANCES=("WebCamOne" "WebCamTwo")
 
+declare -A WEBCAM_INSTANCES_INFO
 
-### Consul config
+WEBCAM_INSTANCES_INFO["WebCamOne_IP"]="10.10.10.10"
+WEBCAM_INSTANCES_INFO["WebCamOne_PORT"]="554"
+WEBCAM_INSTANCES_INFO["WebCamOne_RTSP_URL"]="/h264Preview_01_main"
+WEBCAM_INSTANCES_INFO["WebCamOne_FFMPEG_OPTIONS"]="-c copy"
+WEBCAM_INSTANCES_INFO["WebCamOne_USER"]="admin"
+WEBCAM_INSTANCES_INFO["WebCamOne_PASSWORD"]="pass"
 
-#### WebCam Declararion
+WEBCAM_INSTANCES_INFO["WebCamTwo_IP"]="10.10.10.11"
+WEBCAM_INSTANCES_INFO["WebCamTwo_PORT"]="554"
+WEBCAM_INSTANCES_INFO["WebCamTwo_RTSP_URL"]="/h264Preview_01_main"
+WEBCAM_INSTANCES_INFO["WebCamTwo_FFMPEG_OPTIONS"]="-c copy"
+WEBCAM_INSTANCES_INFO["WebCamTwo_USER"]="admin"
+WEBCAM_INSTANCES_INFO["WebCamTwo_PASSWORD"]="pass"
 
-Webcam service declaration will require certain meta variables that *windmaker-infiniterecorder* will read, here is an example of webcam service:
-```json
-{
-  "ID": "webcamtest",
-  "Name": "WebCamTest",
-  "Tags": ["webcam"],
-  "Address": "BB.AA.XX.YY",
-  "Port": 80,
-  "Meta": {
-    "streamPort": "554",
-    "stramURL": "/h264Preview_01_main",
-    "serviceName": "WebCam Test",
-    "ffmpegExtraOptions": "-c copy"
-  },
-  "EnableTagOverride": false,
-  "check": {
-    "name": "Check WebCam Test",
-    "http": "http://BB.AA.XX.YY",
-    "method": "GET",
-    "interval": "60s",
-    "timeout": "5s"
-  },
-  "Weights": {
-    "Passing": 10,
-    "Warning": 1
-  }
-}
-```
-
-Service can be declared in Consul as follows:
-```bash
-curl --header "X-Consul-Token: ${CONSUL_HTTP_TOKEN}" --request PUT --data @webcamtrasera.json http://127.0.0.1:8500/v1/agent/service/register?replace-existing-checks=true
-```
-
-It is recomended to configure *windmaker-infiniterecorder* for using a consul policy only able to read webcam info and other for vault info. 
-
-
-### Vault config
-
-*windmaker-infiniterecorder* expects a kv folder called webcam where each there is a secret for each webcam with the seame name as Consul service *Name*
-
-```json
-{
-  "password": "The_Password"",
-  "user": "admin"
-}
 ```
 
 ## Service management
