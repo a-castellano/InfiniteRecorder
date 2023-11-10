@@ -1,3 +1,9 @@
+windmaker-infiniterecorder (0.9-12) UNRELEASED; urgency=medium
+
+  * Fix systemd issue.
+
+ -- Álvaro Castellano Vela <alvaro.castellano.vela@gmail.com>  Fri, 10 Nov 2023 21:44:00 +0200
+
 windmaker-infiniterecorder (0.9-11) UNRELEASED; urgency=medium
 
   * Fix errors afer removing consul.

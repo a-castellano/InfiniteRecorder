@@ -6,7 +6,6 @@ ConditionPathExists=/etc/default/windmaker-infiniterecorder
 [Service]
 Type=simple
 User=root
-EnvironmentFile=/etc/default/windmaker-infiniterecorder
 ExecStart=/usr/bin/windmaker-infiniterecorder
 Restart=always
 
