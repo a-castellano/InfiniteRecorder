@@ -36,11 +36,11 @@ function check_required_variable {
 
 function check_webcam_info {
 	webcam_instance=$1
-	error_code=0
+	error_code=1
 	for required_property in "IP" "PORT" "URL" "FFMPEG_OPTIONS" "USER" "PASSWORD"; do
 		if [[ ! -v "WEBCAM_INSTANCES_INFO[${webcam_instance}_${required_property}]" ]]; then
 			write_log "WEBCAM_INSTANCES_INFO[${webcam_instance}_${required_property}] is not set."
-			error_code=1
+			error_code=0
 		fi
 	done
 	return ${error_code}
@@ -51,5 +51,6 @@ function check_webcam_info {
 # Defines folder where videos will be sotored
 
 function define_cam_foder {
-	CAM_FOLDER=$(echo "${RECORDING_FOLDER}/${CAM_NAME}" | perl -pe "s/\/\//\//g")
+	cam_name=$1
+	cam_folder=$(echo "${RECORDING_FOLDER}/${cam_name}" | perl -pe "s/\/\//\//g")
 }

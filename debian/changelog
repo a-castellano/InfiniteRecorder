@@ -1,3 +1,9 @@
+windmaker-infiniterecorder (0.9-10) UNRELEASED; urgency=medium
+
+  * Fix errors afer removing consul.
+
+ -- Álvaro Castellano Vela <alvaro.castellano.vela@gmail.com>  Fri, 10 Nov 2023 08:30:00 +0200
+
 windmaker-infiniterecorder (0.9-9) UNRELEASED; urgency=medium
 
   * Remove consul dependencies from config and stop using it.
