@@ -18,12 +18,9 @@
 
 source lib/01-log.sh
 source lib/02-variable-management.sh
-source lib/03-consul.sh
-source lib/04-vault.sh
-source lib/05-webcam-info.sh
-source lib/06-file-management.sh
-source lib/07-ffmpeg.sh
-source lib/08-threads.sh
+source lib/03-file-management.sh
+source lib/04-ffmpeg.sh
+source lib/05-threads.sh
 
 ###################
 ###     Main    ###
@@ -31,19 +28,23 @@ source lib/08-threads.sh
 
 SCRIPT_NAME="InfiniteRecorder"
 
+# Check config file
+
+if [ ! -f /etc/default/windmaker-infiniterecorder ]; then
+	write_log "/etc/default/windmaker-infiniterecorder does not exist, aborting script."
+	exit 1
+else
+	source /etc/default/windmaker-infiniterecorder
+fi
+
 # Check Variables
 declare -a required_variables
 required_variables=(
 	'video-length'
 	'owner-user'
 	'recording-folder'
-	'consul-cluster'
-	'consul-port'
-	'webcam-consul-token'
-	'alarm-manager-consul-token'
-	'vault-consul-token'
-	'vault-user'
-	'vault-password'
+	'webcam-instances'
+	'webcam-instances-info'
 )
 
 abort_script=false
@@ -64,42 +65,20 @@ if [[ "${abort_script}" = true ]]; then
 	exit 1
 fi
 
-write_log "Processing CONSUL_CLUSTER variable"
+# Check webcam info
 
-declare -a CONSUL_CLUSTER_ARRAY
-define_consul_array
-cluster_found=$?
+for webcam_instance in ${WEBCAM_INSTANCES[@]}; do
+	check_webcam_info ${webcam_instance}
+	valid_webcam_info=$?
+	if [[ "X${valid_webcam_info}X" == "X0X" ]]; then
+		abort_script=true
+	fi
+done
 
-if [[ "X${cluster_found}X" = "X0X" ]]; then
+if [[ "${abort_script}" = true ]]; then
 	write_log "Aborting execucion"
 	exit 1
 fi
-
-write_log "Choosing consul server"
-choose_consul_server
-
-if [[ "X${CONSUL_SERVER}X" == "XX" ]]; then
-	write_log "No consul server passed checks, aborting script"
-	exit 1
-fi
-
-VAULT_SERVER=""
-VAULT_ACESS_TOKEN=""
-
-choose_vault_server
-obtain_vault_access_token
-
-declare -a WEBCAM_INSTANCES
-declare -A WEBCAM_INSTANCES_INFO
-
-list_webcams
-list_retrieved=$?
-if [[ "X${list_retrieved}X" = "X0X" ]]; then
-	write_log "Aborting execucion"
-	exit 1
-fi
-
-get_webcams_info
 
 # Prepare recording
 create_recording_folders
@@ -122,7 +101,8 @@ fi
 
 for webcam_instance in ${WEBCAM_INSTANCES[@]}; do
 	write_log "Lauching record video thread for ${webcam_instance}"
-	record_video "${WEBCAM_INSTANCES_INFO[${webcam_instance}_RTSP_URL]}" "${WEBCAM_INSTANCES_INFO[${webcam_instance}_FOLDER]}" "${WEBCAM_INSTANCES_INFO[${webcam_instance}_FOLDER]}_reduced" "${webcam_instance}" "${WEBCAM_INSTANCES_INFO[${webcam_instance}_FFMPEG_OPTIONS]}" &
+	define_cam_foder ${webcam_instance}
+	record_video "${WEBCAM_INSTANCES_INFO[${webcam_instance}_RTSP_URL]}" "${cam_folder}/raw" "${cam_folder}/raw_reduced" "${webcam_instance}" "${WEBCAM_INSTANCES_INFO[${webcam_instance}_FFMPEG_OPTIONS]}" &
 	>/dev/null 2>/dev/null
 	WEBCAM_INSTANCES_INFO[${webcam_instance}_THREAD]=$!
 	write_log "${webcam_instance} thread id is ${WEBCAM_INSTANCES_INFO[${webcam_instance}_THREAD]}"
@@ -136,16 +116,17 @@ while [ true ]; do
 	for webcam_instance in ${WEBCAM_INSTANCES[@]}; do
 		# Check reduced videos after waiting one minute
 		sleep 60
-		created_raw_videos=$(find "${WEBCAM_INSTANCES_INFO[${webcam_instance}_FOLDER]}" -type f -cmin -1 | wc -l)
+		define_cam_foder ${webcam_instance}
+		created_raw_videos=$(find "${cam_folder}/raw" -type f -cmin -1 | wc -l)
 		if [[ "X${created_raw_videos}X" == "X0X" ]]; then
-			write_log "No videos in ${WEBCAM_INSTANCES_INFO[${webcam_instance}_FOLDER]} during last minute."
+			write_log "No videos in ${cam_folder}/raw during last minute."
 			kill_threads
 		else
 			# Check reduced videos after waiting one minute
 			sleep 60
-			created_raw_reduced_videos=$(find "${WEBCAM_INSTANCES_INFO[${webcam_instance}_FOLDER]}_reduced" -type f -cmin -1 | wc -l)
+			created_raw_reduced_videos=$(find "${cam_folder}/raw_reduced" -type f -cmin -1 | wc -l)
 			if [[ "X${created_raw_videos}X" == "X0X" ]]; then
-				write_log "No videos in ${WEBCAM_INSTANCES_INFO[${webcam_instance}_FOLDER]}_reduced during last minute."
+				write_log "No videos in ${cam_folder}/raw_reduced during last minute."
 				kill_threads
 			fi
 		fi
@@ -155,11 +136,12 @@ while [ true ]; do
 	sleep 60
 
 	for webcam_instance in ${WEBCAM_INSTANCES[@]}; do
+		define_cam_foder ${webcam_instance}
 		write_log "Checking if ${webcam_instance} ffmpeg recording is still running"
-		ffmpeg_instances=$(ps -aux | grep -v "su - ${OWNER_USER}" | grep ffmpeg | grep "${WEBCAM_INSTANCES_INFO[${webcam_instance}_FOLDER]}" | grep -v grep | wc -l)
+		ffmpeg_instances=$(ps -aux | grep -v "su - ${OWNER_USER}" | grep ffmpeg | grep "${cam_folder}/raw" | grep -v grep | wc -l)
 		if [[ "X${ffmpeg_instances}X" == "X0X" ]]; then
 			write_log "ffmpeg ${webcam_instance} instance is not running, launching again."
-			record_video "${WEBCAM_INSTANCES_INFO[${webcam_instance}_RTSP_URL]}" "${WEBCAM_INSTANCES_INFO[${webcam_instance}_FOLDER]}" "${WEBCAM_INSTANCES_INFO[${webcam_instance}_FOLDER]}_reduced" "${webcam_instance}" "${WEBCAM_INSTANCES_INFO[${webcam_instance}_FFMPEG_OPTIONS]}" &
+			record_video "${WEBCAM_INSTANCES_INFO[${webcam_instance}_RTSP_URL]}" "${cam_folder}/raw" "${cam_folder}/raw_reduced" "${webcam_instance}" "${WEBCAM_INSTANCES_INFO[${webcam_instance}_FFMPEG_OPTIONS]}" &
 			>/dev/null 2>/dev/null
 		fi
 

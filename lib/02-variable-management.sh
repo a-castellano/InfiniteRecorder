@@ -21,37 +21,29 @@
 
 function check_required_variable {
 	required_variable=$1
-	if [[ -z ${!required_variable} ]]; then
+	if [[ "$(declare -p ${required_variable})" =~ "declare " ]]; then
+		return 1
+	else
 		write_log "${variable} is not defined."
 		return 0
-	else
-		return 1
 	fi
 }
 
-# define_consul_array
+# check_webcam_info
 #
-# Defines consul array from CONSUL_CLUSTER variable content
-# returns 1 (true) or 0 (false) if it cluster has at least one host
+# checks if required WEBCAM_INSTANCES_INFO keys are defined
+# returns 1 (true) or 0 (false) if it exists
 
-function define_consul_array {
-
-	CONSUL_CLUSTER_ARRAY_RAW=($(echo ${CONSUL_CLUSTER} | tr ',' "\n"))
-	for raw_item in ${CONSUL_CLUSTER_ARRAY_RAW[@]}; do
-		item=$(echo ${raw_item} | xargs)
-		CONSUL_CLUSTER_ARRAY+=($item)
+function check_webcam_info {
+	webcam_instance=$1
+	error_code=1
+	for required_property in "IP" "PORT" "RTSP_URL" "FFMPEG_OPTIONS" "USER" "PASSWORD"; do
+		if [[ ! -v "WEBCAM_INSTANCES_INFO[${webcam_instance}_${required_property}]" ]]; then
+			write_log "WEBCAM_INSTANCES_INFO[${webcam_instance}_${required_property}] is not set."
+			error_code=0
+		fi
 	done
-	array_size="${!CONSUL_CLUSTER_ARRAY[@]}"
-	if [[ "X${array_size}X" == "X0X" ]]; then
-		write_log "No consul servers defined."
-		return 0
-	else
-		write_log "The following consul servers have been defined:"
-		for server in ${CONSUL_CLUSTER_ARRAY[@]}; do
-			write_log "${server}"
-		done
-		return 1
-	fi
+	return ${error_code}
 }
 
 # define_cam_foder
@@ -59,5 +51,6 @@ function define_consul_array {
 # Defines folder where videos will be sotored
 
 function define_cam_foder {
-	CAM_FOLDER=$(echo "${RECORDING_FOLDER}/${CAM_NAME}" | perl -pe "s/\/\//\//g")
+	cam_name=$1
+	cam_folder=$(echo "${RECORDING_FOLDER}/${cam_name}" | perl -pe "s/\/\//\//g")
 }

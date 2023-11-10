@@ -22,7 +22,8 @@
 function create_recording_folders {
 	found_errors=false
 	for webcam_instance in ${WEBCAM_INSTANCES[@]}; do
-		folder_name="${WEBCAM_INSTANCES_INFO[${webcam_instance}_FOLDER]}"
+		define_cam_foder ${webcam_instance}
+		folder_name=${cam_folder}
 		write_log "Creating folder ${folder_name}"
 		mkdir -p ${folder_name}
 		error_code=$?
