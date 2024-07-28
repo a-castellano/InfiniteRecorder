@@ -1,0 +1,30 @@
+#!/bin/bash
+
+#
+#
+#  This is a example config, make changes to use actual users and folders
+#
+#
+
+#VIDEO_LENGTH="0:15"
+#OWNER_USER="user"
+#RECORDING_FOLDER="/home/user/recordings"
+#RAW_VIDEO_DELETE_TIME=1440
+#REDUCED_VIDEO_DELETE_TIME=1440
+#WEBCAM_INSTANCES=("WebCamOne" "WebCamTwo")
+#
+#declare -A WEBCAM_INSTANCES_INFO
+#
+#WEBCAM_INSTANCES_INFO["WebCamOne_IP"]="192.168.1.34"
+#WEBCAM_INSTANCES_INFO["WebCamOne_PORT"]="554"
+#WEBCAM_INSTANCES_INFO["WebCamOne_RTSP_URL"]="/h264Preview_01_main"
+#WEBCAM_INSTANCES_INFO["WebCamOne_FFMPEG_OPTIONS"]="-c copy"
+#WEBCAM_INSTANCES_INFO["WebCamOne_USER"]="admin"
+#WEBCAM_INSTANCES_INFO["WebCamOne_PASSWORD"]="password"
+#
+#WEBCAM_INSTANCES_INFO["WebCamTwo_IP"]="192.168.1.35"
+#WEBCAM_INSTANCES_INFO["WebCamTwo_PORT"]="554"
+#WEBCAM_INSTANCES_INFO["WebCamTwo_RTSP_URL"]="/h264Preview_01_main"
+#WEBCAM_INSTANCES_INFO["WebCamTwo_FFMPEG_OPTIONS"]="-c copy"
+#WEBCAM_INSTANCES_INFO["WebCamTwo_USER"]="admin"
+#WEBCAM_INSTANCES_INFO["WebCamTwo_PASSWORD"]="password"

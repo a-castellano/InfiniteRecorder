@@ -1,0 +1,27 @@
+name: "windmaker-infiniterecorder"
+arch: "any"
+platform: "linux"
+version: "0.9-12"
+section: "default"
+priority: "extra"
+provides:
+- windmaker-infiniterecorder
+- windmaker-infiniterecorder-video-manager
+maintainer: "Álvaro Castellano Vela <alvaro.castellano.vela@gmail.com>"
+description: |
+  Record RTSP streams infinitely
+vendor: "Windmaker"
+homepage: "https://git.windmaker.net/a-castellano/InfiniteRecorder"
+license: "GPLV3"
+changelog: "changelog.yaml"
+contents:
+- src: ./windmaker-infiniterecorder
+  dst: /usr/local/bin/windmaker-infiniterecorder
+- src: ./windmaker-infiniterecorder-video-manager
+  dst: /usr/local/bin/windmaker-infiniterecorder-video-manager
+- src: ./packaging/etc/default/windmaker-infiniterecorder
+  dst: /etc/default/windmaker-infiniterecorder
+- src: ./debian/windmaker-infiniterecorder.cron.d
+  dst: /etc/cron.d/windmaker-infiniterecorder
+- src: ./packaging/systemd/windmaker-infiniterecorder.service
+  dst: /usr/lib/systemd/system/windmaker-infiniterecorder.service

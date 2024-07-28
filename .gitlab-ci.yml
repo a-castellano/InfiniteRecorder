@@ -1,9 +1,9 @@
 stages:
     - build
 
-build_package:
+build_debian_package:
   stage: build
-  image: registry.windmaker.net:5005/a-castellano/limani/base_deb_golang_1_20_builder:202307300954
+  image: registry.windmaker.net:5005/a-castellano/limani/base_golang_1_22:202407020557
   script:
     - dpkg-buildpackage -uc -b
     - mkdir deb_package
@@ -12,4 +12,18 @@ build_package:
     name: "coverage-$CI_PIPELINE_ID"
     paths:
       - deb_package
+    expire_in: 1 hour
+
+build_pacman_package:
+  stage: build
+  image: registry.windmaker.net:5005/a-castellano/limani/base_golang_1_22:202407020557
+  script:
+    - make build
+    - nfpm package --packager archlinux
+    - mkdir pacman_package
+    - mv *.pkg.tar.zst pacman_package/
+  artifacts:
+    name: "coverage-$CI_PIPELINE_ID"
+    paths:
+      - pacman_package
     expire_in: 1 hour

@@ -1,0 +1,9 @@
+- semver: 0.9-12
+  date: 2024-07-28T20:36:00+02:00
+  packager: Álvaro Castellano Vela <alvaro.castellano.vela@gmail>
+  changes:
+  - note: |-
+      First Arch Linux Release
+    author:
+      name: Álvaro Castellano Vela
+      email: alvaro.castellano.vela@gmail.com
