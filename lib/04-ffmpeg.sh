@@ -22,7 +22,7 @@ source lib/01-log.sh
 
 function take_snapshots {
 	failed_snapshots=false
-	snapshot_location=$( mktemp -d )
+	snapshot_location=$(mktemp -d)
 	for webcam_instance in ${WEBCAM_INSTANCES[@]}; do
 		# Take Snapshot
 		RTSP_URL="rtsp://${WEBCAM_INSTANCES_INFO[${webcam_instance}_USER]}:${WEBCAM_INSTANCES_INFO[${webcam_instance}_PASSWORD]}@${WEBCAM_INSTANCES_INFO[${webcam_instance}_IP]}:${WEBCAM_INSTANCES_INFO[${webcam_instance}_PORT]}${WEBCAM_INSTANCES_INFO[${webcam_instance}_URL]}"
@@ -82,7 +82,6 @@ function record_reduced_video {
 ffmpeg -y -i '$1' ${@:4} -map 0 -f segment -segment_time ${VIDEO_LENGTH} -segment_format mp4 -preset ultrafast -crf 40 -tune fastdecode -strftime 1 -reset_timestamps 1  \"$2/record-%Y-%m-%d_%H-%M-%S.mp4\" -vcodec libx264 -metadata title=\"$3\""
 	runuser -l "${OWNER_USER}" -c "${record_video_command}" 2>/dev/null >/dev/null
 }
-
 
 # combine_and_reduce_videos
 #
