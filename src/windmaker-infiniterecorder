@@ -141,7 +141,7 @@ while [ true ]; do
 		ffmpeg_instances=$(ps -aux | grep -v "su - ${OWNER_USER}" | grep ffmpeg | grep "${cam_folder}/raw" | grep -v grep | wc -l)
 		if [[ "X${ffmpeg_instances}X" == "X0X" ]]; then
 			write_log "ffmpeg ${webcam_instance} instance is not running, launching again."
-		if ${WEBCAM_INSTANCES_INFO["${webcam_instance}_REDUCED_ONLY"]}=false ; then
+			if [ ${WEBCAM_INSTANCES_INFO["${webcam_instance}_REDUCED_ONLY"]}=false ]; then
 			record_video "${WEBCAM_INSTANCES_INFO[${webcam_instance}_RTSP_URL]}" "${cam_folder}/raw" "${cam_folder}/raw_reduced" "${webcam_instance}" "${WEBCAM_INSTANCES_INFO[${webcam_instance}_FFMPEG_OPTIONS]}" &
 			>/dev/null 2>/dev/null
 		else

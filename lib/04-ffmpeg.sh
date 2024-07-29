@@ -22,25 +22,24 @@ source lib/01-log.sh
 
 function take_snapshots {
 	failed_snapshots=false
+	snapshot_location=$( mktemp -d )
 	for webcam_instance in ${WEBCAM_INSTANCES[@]}; do
 		# create snapshot location
 		snapshot_location=$(mktemp)
-		# Now we have a name, delete it
-		rm -f ${snapshot_location}
 		# Take Snapshot
 		RTSP_URL="rtsp://${WEBCAM_INSTANCES_INFO[${webcam_instance}_USER]}:${WEBCAM_INSTANCES_INFO[${webcam_instance}_PASSWORD]}@${WEBCAM_INSTANCES_INFO[${webcam_instance}_IP]}:${WEBCAM_INSTANCES_INFO[${webcam_instance}_PORT]}${WEBCAM_INSTANCES_INFO[${webcam_instance}_URL]}"
 		WEBCAM_INSTANCES_INFO[${webcam_instance}_RTSP_URL]="${RTSP_URL}"
 		write_log "Taking snapshot test from ${webcam_instance}"
-		/usr/bin/ffmpeg -y -i ${RTSP_URL} -vframes 1 "${snapshot_location}.jpg" >/dev/null 2>/dev/null
+		/usr/bin/ffmpeg -y -i ${RTSP_URL} -vframes 1 "${snapshot_location}/${webcam_instance}.jpg" >/dev/null 2>/dev/null
 		ffmpeg_result=$?
-		test -f "${snapshot_location}.jpg"
+		test -f "${snapshot_location}/${webcam_instance}.jpg"
 		snapshot_result=$?
-		rm -f ${snapshot_location}
 		if [[ "X${ffmpeg_result}${snapshot_result}X" != "X00X" ]]; then
 			write_log "Snapshot test for webcam ${webcam_instance} has failed."
 			failed_snapshots=true
 		fi
 	done
+	rm -rf ${snapshot_location}
 	if [ "${failed_snapshots}" = true ]; then
 		write_log "Some snapshot tests have failed."
 		return 0
