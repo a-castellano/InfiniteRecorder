@@ -1,7 +1,7 @@
 name: "windmaker-infiniterecorder"
 arch: "any"
 platform: "linux"
-version: "0.9-12"
+version: "0.9.12"
 section: "default"
 priority: "extra"
 provides:
