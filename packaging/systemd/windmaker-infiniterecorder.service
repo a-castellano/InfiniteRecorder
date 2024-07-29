@@ -1,6 +1,8 @@
 [Unit]
 Description=Windmaker Infiniterecorder
-After=network.target remote-fs.target nss-lookup.target
+Wants=network-online.target
+After=nss-lookup.target
+After=network-online.target
 ConditionPathExists=/etc/default/windmaker-infiniterecorder
 
 [Service]
