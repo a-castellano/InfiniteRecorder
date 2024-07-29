@@ -102,8 +102,13 @@ fi
 for webcam_instance in ${WEBCAM_INSTANCES[@]}; do
 	write_log "Lauching record video thread for ${webcam_instance}"
 	define_cam_foder ${webcam_instance}
+	if [ ${WEBCAM_INSTANCES_INFO["${webcam_instance}_REDUCED_ONLY"]}=false ]; then
 	record_video "${WEBCAM_INSTANCES_INFO[${webcam_instance}_RTSP_URL]}" "${cam_folder}/raw" "${cam_folder}/raw_reduced" "${webcam_instance}" "${WEBCAM_INSTANCES_INFO[${webcam_instance}_FFMPEG_OPTIONS]}" &
 	>/dev/null 2>/dev/null
+else
+					record_reduced_video "${WEBCAM_INSTANCES_INFO[${webcam_instance}_RTSP_URL]}" "${cam_folder}/raw_reduced" "${webcam_instance}" "${WEBCAM_INSTANCES_INFO[${webcam_instance}_FFMPEG_OPTIONS]}" &
+	>/dev/null 2>/dev/null
+	fi
 	WEBCAM_INSTANCES_INFO[${webcam_instance}_THREAD]=$!
 	write_log "${webcam_instance} thread id is ${WEBCAM_INSTANCES_INFO[${webcam_instance}_THREAD]}"
 

@@ -24,8 +24,6 @@ function take_snapshots {
 	failed_snapshots=false
 	snapshot_location=$( mktemp -d )
 	for webcam_instance in ${WEBCAM_INSTANCES[@]}; do
-		# create snapshot location
-		snapshot_location=$(mktemp -d)
 		# Take Snapshot
 		RTSP_URL="rtsp://${WEBCAM_INSTANCES_INFO[${webcam_instance}_USER]}:${WEBCAM_INSTANCES_INFO[${webcam_instance}_PASSWORD]}@${WEBCAM_INSTANCES_INFO[${webcam_instance}_IP]}:${WEBCAM_INSTANCES_INFO[${webcam_instance}_PORT]}${WEBCAM_INSTANCES_INFO[${webcam_instance}_URL]}"
 		WEBCAM_INSTANCES_INFO[${webcam_instance}_RTSP_URL]="${RTSP_URL}"
