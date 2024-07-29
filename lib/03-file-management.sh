@@ -31,7 +31,7 @@ function create_recording_folders {
 			found_errors=true
 			write_log "Cannot create folder ${folder_name}"
 		fi
-		if [ ${WEBCAM_INSTANCES_INFO["${webcam_instance}_REDUCED_ONLY"]}=false ]; then
+		if [ "${WEBCAM_INSTANCES_INFO[${webcam_instance}_REDUCED_ONLY]}" = false ]; then
 			if mkdir -p ${folder_name}/raw; then
 				write_log "Folder ${folder_name}/raw_reduced created"
 			else
@@ -52,7 +52,7 @@ function create_recording_folders {
 			found_errors=true
 			write_log "Cannot change ${folder_name} ownwer"
 		fi
-		if [ ${WEBCAM_INSTANCES_INFO["${webcam_instance}_REDUCED_ONLY"]}=false ]; then
+		if [ "${WEBCAM_INSTANCES_INFO[${webcam_instance}_REDUCED_ONLY]}" = false ]; then
 			if chown -R ${OWNER_USER}:${OWNER_USER} ${folder_name}/raw; then
 				write_log "Folder ${folder_name}/raw owner changed"
 			else
