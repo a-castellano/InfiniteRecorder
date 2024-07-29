@@ -65,7 +65,7 @@ function take_snapshots {
 function record_video {
 	record_video_command="
 ffmpeg -y -i '$1' ${@:5} -map 0 -f segment -segment_time ${VIDEO_LENGTH} -segment_format mp4 -strftime 1 -reset_timestamps 1 \"$2/record-%Y-%m-%d_%H-%M-%S.mp4\" -vcodec libx264 -metadata title=\"$4\" -f segment -segment_time ${VIDEO_LENGTH} -segment_format mp4 -preset ultrafast -crf 40 -tune fastdecode -strftime 1 -reset_timestamps 1  \"$3/record-%Y-%m-%d_%H-%M-%S.mp4\" -vcodec libx264 -metadata title=\"$4\""
-	su - "${OWNER_USER}" -s /bin/bash -c "${record_video_command}" 2>/dev/null >/dev/null
+	runuser -s /bin/bash -u "${OWNER_USER}" -c "${record_video_command}" 2>/dev/null >/dev/null
 }
 
 # record_reduced_video
@@ -83,7 +83,7 @@ ffmpeg -y -i '$1' ${@:5} -map 0 -f segment -segment_time ${VIDEO_LENGTH} -segmen
 function record_reduced_video {
 	record_video_command="
 ffmpeg -y -i '$1' ${@:4} -map 0 -f segment -segment_time ${VIDEO_LENGTH} -segment_format mp4 -preset ultrafast -crf 40 -tune fastdecode -strftime 1 -reset_timestamps 1  \"$2/record-%Y-%m-%d_%H-%M-%S.mp4\" -vcodec libx264 -metadata title=\"$3\""
-	su - "${OWNER_USER}" -s /bin/bash -c "${record_video_command}" 2>/dev/null >/dev/null
+	runuser -s /bin/bash -u "${OWNER_USER}" -c "${record_video_command}" 2>/dev/null >/dev/null
 }
 
 
