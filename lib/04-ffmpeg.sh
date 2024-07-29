@@ -68,6 +68,25 @@ ffmpeg -y -i '$1' ${@:5} -map 0 -f segment -segment_time ${VIDEO_LENGTH} -segmen
 	su - "${OWNER_USER}" -s /bin/bash -c "${record_video_command}" 2>/dev/null >/dev/null
 }
 
+# record_reduced_video
+#
+# records cam streaming in chunks with reduced settings
+# Video is recoring in only one output, reduced one
+#
+# Args
+# $1 -> rtsp url
+# $2 -> recording folder
+# $3 -> webcam name
+# $4 and beyond -> ffmpeg options
+#
+
+function record_reduced_video {
+	record_video_command="
+ffmpeg -y -i '$1' ${@:4} -map 0 -f segment -segment_time ${VIDEO_LENGTH} -segment_format mp4 -preset ultrafast -crf 40 -tune fastdecode -strftime 1 -reset_timestamps 1  \"$2/record-%Y-%m-%d_%H-%M-%S.mp4\" -vcodec libx264 -metadata title=\"$3\""
+	su - "${OWNER_USER}" -s /bin/bash -c "${record_video_command}" 2>/dev/null >/dev/null
+}
+
+
 # combine_and_reduce_videos
 #
 # combines videos and reduce combined copy size
