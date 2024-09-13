@@ -22,25 +22,22 @@ source lib/01-log.sh
 
 function take_snapshots {
 	failed_snapshots=false
+	snapshot_location=$(mktemp -d)
 	for webcam_instance in ${WEBCAM_INSTANCES[@]}; do
-		# create snapshot location
-		snapshot_location=$(mktemp)
-		# Now we have a name, delete it
-		rm -f ${snapshot_location}
 		# Take Snapshot
 		RTSP_URL="rtsp://${WEBCAM_INSTANCES_INFO[${webcam_instance}_USER]}:${WEBCAM_INSTANCES_INFO[${webcam_instance}_PASSWORD]}@${WEBCAM_INSTANCES_INFO[${webcam_instance}_IP]}:${WEBCAM_INSTANCES_INFO[${webcam_instance}_PORT]}${WEBCAM_INSTANCES_INFO[${webcam_instance}_URL]}"
 		WEBCAM_INSTANCES_INFO[${webcam_instance}_RTSP_URL]="${RTSP_URL}"
 		write_log "Taking snapshot test from ${webcam_instance}"
-		/usr/bin/ffmpeg -y -i ${RTSP_URL} -vframes 1 "${snapshot_location}.jpg" >/dev/null 2>/dev/null
+		/usr/bin/ffmpeg -y -i ${RTSP_URL} -vframes 1 "${snapshot_location}/${webcam_instance}.jpg" >/dev/null 2>/dev/null
 		ffmpeg_result=$?
-		test -f "${snapshot_location}.jpg"
+		test -f "${snapshot_location}/${webcam_instance}.jpg"
 		snapshot_result=$?
-		rm -f ${snapshot_location}
 		if [[ "X${ffmpeg_result}${snapshot_result}X" != "X00X" ]]; then
 			write_log "Snapshot test for webcam ${webcam_instance} has failed."
 			failed_snapshots=true
 		fi
 	done
+	rm -rf ${snapshot_location}
 	if [ "${failed_snapshots}" = true ]; then
 		write_log "Some snapshot tests have failed."
 		return 0
@@ -65,7 +62,25 @@ function take_snapshots {
 function record_video {
 	record_video_command="
 ffmpeg -y -i '$1' ${@:5} -map 0 -f segment -segment_time ${VIDEO_LENGTH} -segment_format mp4 -strftime 1 -reset_timestamps 1 \"$2/record-%Y-%m-%d_%H-%M-%S.mp4\" -vcodec libx264 -metadata title=\"$4\" -f segment -segment_time ${VIDEO_LENGTH} -segment_format mp4 -preset ultrafast -crf 40 -tune fastdecode -strftime 1 -reset_timestamps 1  \"$3/record-%Y-%m-%d_%H-%M-%S.mp4\" -vcodec libx264 -metadata title=\"$4\""
-	su - "${OWNER_USER}" -s /bin/bash -c "${record_video_command}" 2>/dev/null >/dev/null
+	runuser -l "${OWNER_USER}" -c "${record_video_command}" 2>/dev/null >/dev/null
+}
+
+# record_reduced_video
+#
+# records cam streaming in chunks with reduced settings
+# Video is recoring in only one output, reduced one
+#
+# Args
+# $1 -> rtsp url
+# $2 -> recording folder
+# $3 -> webcam name
+# $4 and beyond -> ffmpeg options
+#
+
+function record_reduced_video {
+	record_video_command="
+ffmpeg -y -i '$1' ${@:4} -map 0 -f segment -segment_time ${VIDEO_LENGTH} -segment_format mp4 -preset ultrafast -crf 40 -tune fastdecode -strftime 1 -reset_timestamps 1  \"$2/record-%Y-%m-%d_%H-%M-%S.mp4\" -vcodec libx264 -metadata title=\"$3\""
+	runuser -l "${OWNER_USER}" -c "${record_video_command}" 2>/dev/null >/dev/null
 }
 
 # combine_and_reduce_videos
