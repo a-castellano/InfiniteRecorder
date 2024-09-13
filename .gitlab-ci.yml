@@ -3,27 +3,27 @@ stages:
 
 build_debian_package:
   stage: build
-  image: registry.windmaker.net:5005/a-castellano/limani/base_golang_1_22:202407020557
+  image: registry.windmaker.net:5005/a-castellano/limani/base_golang_1_22:202408211952
   script:
     - dpkg-buildpackage -uc -b
     - mkdir deb_package
     - mv ../*.deb deb_package/
   artifacts:
-    name: "coverage-$CI_PIPELINE_ID"
+    name: "deb-$CI_PIPELINE_ID"
     paths:
       - deb_package
     expire_in: 1 hour
 
 build_pacman_package:
   stage: build
-  image: registry.windmaker.net:5005/a-castellano/limani/base_golang_1_22:202407020557
+  image: registry.windmaker.net:5005/a-castellano/limani/base_golang_1_22:202408211952
   script:
     - make build
     - nfpm package --packager archlinux
     - mkdir pacman_package
     - mv *.pkg.tar.zst pacman_package/
   artifacts:
-    name: "coverage-$CI_PIPELINE_ID"
+    name: "pacman-$CI_PIPELINE_ID"
     paths:
       - pacman_package
     expire_in: 1 hour
