@@ -1,7 +1,7 @@
 name: "windmaker-infiniterecorder"
 arch: "any"
 platform: "linux"
-version: "0.9.12"
+version: "0.10-1"
 section: "default"
 priority: "extra"
 provides:
@@ -20,8 +20,23 @@ contents:
 - src: ./windmaker-infiniterecorder-video-manager
   dst: /usr/local/bin/windmaker-infiniterecorder-video-manager
 - src: ./packaging/etc/default/windmaker-infiniterecorder
-  dst: /etc/default/windmaker-infiniterecorder
+  dst: /etc/default/windmaker-infiniterecorder-example
 - src: ./debian/windmaker-infiniterecorder.cron.d
   dst: /etc/cron.d/windmaker-infiniterecorder
 - src: ./packaging/systemd/windmaker-infiniterecorder.service
   dst: /usr/lib/systemd/system/windmaker-infiniterecorder.service
+
+# Scripts to run at specific stages. (overridable)
+scripts:
+  postinstall: ./scripts/postinstall.sh
+  postremove: ./scripts/postremove.sh
+
+overrides:
+  deb:
+    depends:
+      - dialog
+      - ffmpeg
+  archlinux:
+    depends:
+      - dialog
+      - ffmpeg
