@@ -28,8 +28,8 @@ contents:
 
 # Scripts to run at specific stages. (overridable)
 scripts:
-  postinstall: ./scripts/postinstall.sh
-  postremove: ./scripts/postremove.sh
+  postinstall: ./packaging/scripts/postinstall.sh
+  postremove: ./packaging/scripts/postremove.sh
 
 overrides:
   deb:
