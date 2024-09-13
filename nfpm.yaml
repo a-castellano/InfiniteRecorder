@@ -21,10 +21,6 @@ contents:
   dst: /usr/local/bin/windmaker-infiniterecorder-video-manager
 - src: ./packaging/etc/default/windmaker-infiniterecorder
   dst: /etc/default/windmaker-infiniterecorder-example
-- src: ./debian/windmaker-infiniterecorder.cron.d
-  dst: /etc/cron.d/windmaker-infiniterecorder
-- src: ./packaging/systemd/windmaker-infiniterecorder.service
-  dst: /usr/lib/systemd/system/windmaker-infiniterecorder.service
 
 # Scripts to run at specific stages. (overridable)
 scripts:
