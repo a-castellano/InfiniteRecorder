@@ -21,53 +21,57 @@
 
 function create_recording_folders {
 	found_errors=false
-	for webcam_instance in ${WEBCAM_INSTANCES[@]}; do
-		define_cam_foder ${webcam_instance}
-		folder_name=${cam_folder}
+	for webcam_instance in "${WEBCAM_INSTANCES[@]}"; do
+		cam_folder=$(define_cam_foder "${webcam_instance}")
+folder_name="${cam_folder}"
 		write_log "Creating folder ${folder_name}"
-		if mkdir -p ${folder_name}; then
+		if mkdir -p "${folder_name}"; then
 			write_log "Folder ${folder_name} created"
 		else
 			found_errors=true
 			write_log "Cannot create folder ${folder_name}"
 		fi
+		if mkdir -p "${folder_name}/merged"; then
+			write_log "Folder ${folder_name} created"
+		else
+			found_errors=true
+			write_log "Cannot create folder ${folder_name}/merged"
+		fi
+
 		if [ "${WEBCAM_INSTANCES_INFO[${webcam_instance}_REDUCED_ONLY]}" = false ]; then
-			if mkdir -p ${folder_name}/raw; then
-				write_log "Folder ${folder_name}/raw_reduced created"
+			if mkdir -p "${folder_name}/raw"; then
+				write_log "Folder ${folder_name}/raw created"
 			else
 				found_errors=true
 				write_log "Cannot create folder ${folder_name}/raw"
 			fi
+			if mkdir -p "${folder_name}/merged/raw"; then
+				write_log "Folder ${folder_name}/merged/raw created"
+			else
+				found_errors=true
+				write_log "Cannot create folder ${folder_name}/merged/raw"
+			fi
 		fi
-		if mkdir -p ${folder_name}/raw_reduced; then
+		if mkdir -p "${folder_name}/raw_reduced"; then
 			write_log "Folder ${folder_name}/raw_reduced created"
 		else
 			found_errors=true
 			write_log "Cannot create folder ${folder_name}/raw_reduced"
 		fi
-
-		if chown -R ${OWNER_USER}:${OWNER_USER} ${folder_name}; then
+		if mkdir -p "${folder_name}/merged/raw_reduced"; then
+			write_log "Folder ${folder_name}/merged/raw_reduced created"
+		else
+			found_errors=true
+			write_log "Cannot create folder ${folder_name}/merged/raw_reduced"
+		fi
+		if chown -R "${OWNER_USER}":"${OWNER_USER}" "${folder_name}"; then
 			write_log "Folder ${folder_name} owner changed"
 		else
 			found_errors=true
 			write_log "Cannot change ${folder_name} ownwer"
 		fi
-		if [ "${WEBCAM_INSTANCES_INFO[${webcam_instance}_REDUCED_ONLY]}" = false ]; then
-			if chown -R ${OWNER_USER}:${OWNER_USER} ${folder_name}/raw; then
-				write_log "Folder ${folder_name}/raw owner changed"
-			else
-				found_errors=true
-				write_log "Cannot change ${folder_name}/raw ownwer"
-			fi
-		fi
-		if chown -R ${OWNER_USER}:${OWNER_USER} ${folder_name}/raw_reduced; then
-			write_log "Folder ${folder_name}/raw_reduced owner changed"
-		else
-			found_errors=true
-			write_log "Cannot change ${folder_name}/raw_reduced ownwer"
-		fi
 	done
-	if [ "$found_errors" = false ]; then
+	if [ "${found_errors}" = false ]; then
 		return 1
 	else
 		write_log "Cannot create all folders"
