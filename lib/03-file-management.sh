@@ -23,7 +23,7 @@ function create_recording_folders {
 	found_errors=false
 	for webcam_instance in "${WEBCAM_INSTANCES[@]}"; do
 		cam_folder=$(define_cam_foder "${webcam_instance}")
-folder_name="${cam_folder}"
+		folder_name="${cam_folder}"
 		write_log "Creating folder ${folder_name}"
 		if mkdir -p "${folder_name}"; then
 			write_log "Folder ${folder_name} created"

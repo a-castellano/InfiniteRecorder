@@ -21,7 +21,7 @@
 
 function check_required_variable {
 	required_variable="$1"
-		if [[ $(declare -p "${required_variable}" 2>/dev/null) =~ "declare " ]]; then
+	if [[ $(declare -p "${required_variable}" 2>/dev/null) =~ "declare " ]]; then
 		return 1
 	else
 		write_log "${required_variable} is not defined."
