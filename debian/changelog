@@ -1,3 +1,12 @@
+windmaker-infiniterecorder (0.10-1) UNRELEASED; urgency=medium
+
+  * Fix default config file overwrite.
+  *
+  *
+  *
+
+ -- Álvaro Castellano Vela <alvaro.castellano.vela@gmail.com>  Wed, 11 Sep 2024 21:44:00 +0200
+
 windmaker-infiniterecorder (0.9-12) UNRELEASED; urgency=medium
 
   * Fix systemd issue.
