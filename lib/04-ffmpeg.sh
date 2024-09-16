@@ -74,7 +74,7 @@ function record_video {
 		-vcodec libx264
 		-metadata title="$4"
 	)
-	ffmpeg "${record_video_options_array[*]}" 2>/dev/null >/dev/null
+	ffmpeg "${record_video_options_array[@]}" 2>/dev/null >/dev/null
 }
 
 # record_reduced_video
@@ -100,7 +100,7 @@ function record_reduced_video {
 		-vcodec libx264
 		-metadata title="$3"
 	)
-	ffmpeg "${record_video_options_array[*]}" 2>/dev/null >/dev/null
+	ffmpeg "${record_video_options_array[@]}" 2>/dev/null >/dev/null
 }
 
 # combine_and_reduce_videos
