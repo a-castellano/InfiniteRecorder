@@ -28,7 +28,7 @@ function take_snapshots {
 		RTSP_URL="rtsp://${WEBCAM_INSTANCES_INFO[${webcam_instance}_USER]}:${WEBCAM_INSTANCES_INFO[${webcam_instance}_PASSWORD]}@${WEBCAM_INSTANCES_INFO[${webcam_instance}_IP]}:${WEBCAM_INSTANCES_INFO[${webcam_instance}_PORT]}${WEBCAM_INSTANCES_INFO[${webcam_instance}_URL]}"
 		WEBCAM_INSTANCES_INFO[${webcam_instance}_RTSP_URL]="${RTSP_URL}"
 		write_log "Taking snapshot test from ${webcam_instance}"
-		/usr/bin/ffmpeg -y -i "${RTSP_URL}" -vframes 1 "${snapshot_location}.jpg" >/dev/null 2>/dev/null
+		/usr/bin/ffmpeg -y -i "${RTSP_URL}" -vframes 1 "${snapshot_location}/${webcam_instance}.jpg" >/dev/null 2>/dev/null
 		ffmpeg_result=$?
 		test -f "${snapshot_location}/${webcam_instance}.jpg"
 		snapshot_result=$?
