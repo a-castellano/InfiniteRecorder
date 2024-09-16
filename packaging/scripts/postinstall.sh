@@ -81,6 +81,8 @@ WEBCAM_INSTANCES_INFO["WebCamTwo_PASSWORD"]="pass"
 WEBCAM_INSTANCES_INFO["WebCamOne_REDUCED_ONLY"]=false
 EOF
 
+chown "${selected_user}:" "${user_home}/.config/windmaker-infiniterecorder-env-example"
+
 	cat <<EOF >"${user_home}/.config/systemd/user/windmaker-infiniterecorder.service"
 [Unit]
 Description=Windmaker Infiniterecorder
@@ -97,6 +99,8 @@ EnvironmentFile=${user_home}/.config/windmaker-infiniterecorder-env
 [Install]
 WantedBy=default.target
 EOF
+
+chown "${selected_user}:" "${user_home}/.config/systemd/user/windmaker-infiniterecorder.service"
 
 	echo "As user '${selected_user}', run the following command:"
 	echo ""
