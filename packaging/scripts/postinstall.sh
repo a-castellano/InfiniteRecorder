@@ -90,9 +90,8 @@ After=network-online.target
 
 [Service]
 Type=simple
-ExecStart=/usr/local/bin/windmaker-infiniterecorder
+ExecStart=source ${user_home}/.config/windmaker-infiniterecorder-env && /usr/local/bin/windmaker-infiniterecorder
 Restart=always
-EnvironmentFile=${user_home}/.config/windmaker-infiniterecorder-env
 
 [Install]
 WantedBy=default.target
