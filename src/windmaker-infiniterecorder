@@ -30,18 +30,22 @@ SCRIPT_NAME="InfiniteRecorder"
 
 # Check config file
 
-if [ ! -f /etc/default/windmaker-infiniterecorder ]; then
-	write_log "/etc/default/windmaker-infiniterecorder does not exist, aborting script."
+if [ -z "${ENV_FILE}" ]; then
+	write_log "ENV_FILE variable is not defined, aborting"
+	exit 1
+fi
+
+if [ ! -f "${ENV_FILE}" ]; then
+	write_log "${ENV_FILE} does not exist, aborting script."
 	exit 1
 else
-	source /etc/default/windmaker-infiniterecorder
+	source "${ENV_FILE}"
 fi
 
 # Check Variables
 declare -a required_variables
 required_variables=(
 	'video-length'
-	'owner-user'
 	'recording-folder'
 	'webcam-instances'
 	'webcam-instances-info'
