@@ -60,8 +60,9 @@ function take_snapshots {
 #
 
 function record_video {
+	options=$(echo "${@:4}" | xargs)
 	record_video_options_array=(
-		-y -i "$1" "${@:5}"
+		-y -i "$1" "${options}"
 		-map 0 -f segment -segment_time "${VIDEO_LENGTH}"
 		-segment_format mp4 -strftime 1 -reset_timestamps 1
 		"$2/record-%Y-%m-%d_%H-%M-%S.mp4"
@@ -90,8 +91,9 @@ function record_video {
 #
 
 function record_reduced_video {
+	options=$(echo "${@:4}" | xargs)
 	record_video_options_array=(
-		-y -i "$1" "${@:4}"
+		-y -i "$1" "${options}"
 		-map 0 -f segment -segment_time "${VIDEO_LENGTH}"
 		-segment_format mp4
 		-preset ultrafast -crf 40 -tune fastdecode
