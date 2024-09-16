@@ -51,7 +51,7 @@ if getent passwd "${selected_user}" >/dev/null; then
 
 	user_home=$(getent passwd "${selected_user}" | cut -d: -f6)
 
-	runuser -u "${selected_user}" -c "mkdir -p  ${user_home}/.config/systemd/user" 2>/dev/null
+	su -u "${selected_user}" -c "mkdir -p  ${user_home}/.config/systemd/user" 2>/dev/null
 
 	cat <<EOF >"${user_home}/.config/windmaker-infiniterecorder-env-example"
 #!/bin/bash
