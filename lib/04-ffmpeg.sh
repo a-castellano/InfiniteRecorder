@@ -91,14 +91,14 @@ function record_video {
 
 function record_reduced_video {
 	record_video_options_array=(
-		"-y -i '$1' ${@:4}"
-		"-map 0 -f segment -segment_time ${VIDEO_LENGTH}"
-		"-segment_format mp4"
-		"-preset ultrafast -crf 40 -tune fastdecode"
-		"-strftime 1 -reset_timestamps 1"
-		"\"$2/record-%Y-%m-%d_%H-%M-%S.mp4\""
-		"-vcodec libx264"
-		"-metadata title=\"$3\""
+		-y -i "$1" "${@:4}"
+		-map 0 -f segment -segment_time "${VIDEO_LENGTH}"
+		-segment_format mp4
+		-preset ultrafast -crf 40 -tune fastdecode"
+-strftime 1 -reset_timestamps 1
+"$2/record-%Y-%m-%d_%H-%M-%S.mp4"
+-vcodec libx264"
+		-metadata title="$3"
 	)
 	ffmpeg "${record_video_options_array[*]}" 2>/dev/null >/dev/null
 }

@@ -93,9 +93,6 @@ Type=simple
 ExecStart=/usr/local/bin/windmaker-infiniterecorder
 Restart=always
 Environment="ENV_FILE=${user_home}/.config/windmaker-infiniterecorder-env"
-
-[Install]
-WantedBy=user.target
 EOF
 
 chown "${selected_user}:" "${user_home}/.config/systemd/user/windmaker-infiniterecorder.service"
