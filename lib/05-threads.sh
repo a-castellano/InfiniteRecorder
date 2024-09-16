@@ -23,6 +23,7 @@ source lib/01-log.sh
 function kill_threads {
 	write_log "Killing recording processes"
 	kill -9 "$(ps -efj --no-headers | awk -v pid=$$ '$3==pid {print $2}' | xargs)"
+	exit 0
 }
 
 # Trap SIGTERM signal for killing threads
