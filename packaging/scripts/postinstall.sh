@@ -51,7 +51,7 @@ if getent passwd "${selected_user}" >/dev/null; then
 
 	user_home=$(getent passwd "${selected_user}" | cut -d: -f6)
 
-	su -u "${selected_user}" -c "mkdir -p  ${user_home}/.config/systemd/user" 2>/dev/null
+	mkdir -p  "${user_home}/.config/systemd/user"
 
 	cat <<EOF >"${user_home}/.config/windmaker-infiniterecorder-env-example"
 #!/bin/bash
@@ -80,8 +80,6 @@ WEBCAM_INSTANCES_INFO["WebCamTwo_USER"]="admin"
 WEBCAM_INSTANCES_INFO["WebCamTwo_PASSWORD"]="pass"
 WEBCAM_INSTANCES_INFO["WebCamOne_REDUCED_ONLY"]=false
 EOF
-
-chown "${selected_user}:" "${user_home}/.config/windmaker-infiniterecorder-env-example"
 
 	cat <<EOF >"${user_home}/.config/systemd/user/windmaker-infiniterecorder.service"
 [Unit]
