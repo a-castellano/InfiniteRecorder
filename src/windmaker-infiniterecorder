@@ -103,14 +103,14 @@ fi
 
 # Record Videos
 
-for webcam_instance in ${WEBCAM_INSTANCES[@]}; do
+for webcam_instance in "${WEBCAM_INSTANCES[@]}"; do
 	write_log "Lauching record video thread for ${webcam_instance}"
 	define_cam_foder ${webcam_instance}
 	if [ "${WEBCAM_INSTANCES_INFO[${webcam_instance}_REDUCED_ONLY]}" = false ]; then
-		record_video "${WEBCAM_INSTANCES_INFO[${webcam_instance}_RTSP_URL]}" "${cam_folder}/raw" "${cam_folder}/raw_reduced" "${webcam_instance}" ${WEBCAM_INSTANCES_INFO[${webcam_instance}_FFMPEG_OPTIONS]} &
+		record_video "${WEBCAM_INSTANCES_INFO[${webcam_instance}_RTSP_URL]}" "${cam_folder}/raw" "${cam_folder}/raw_reduced" "${webcam_instance}" "${WEBCAM_INSTANCES_INFO[${webcam_instance}_FFMPEG_OPTIONS]}" &
 		>/dev/null 2>/dev/null
 	else
-		record_reduced_video "${WEBCAM_INSTANCES_INFO[${webcam_instance}_RTSP_URL]}" "${cam_folder}/raw_reduced" "${webcam_instance}" ${WEBCAM_INSTANCES_INFO[${webcam_instance}_FFMPEG_OPTIONS]} &
+		record_reduced_video "${WEBCAM_INSTANCES_INFO[${webcam_instance}_RTSP_URL]}" "${cam_folder}/raw_reduced" "${webcam_instance}" "${WEBCAM_INSTANCES_INFO[${webcam_instance}_FFMPEG_OPTIONS]}" &
 		>/dev/null 2>/dev/null
 	fi
 	WEBCAM_INSTANCES_INFO[${webcam_instance}_THREAD]=$!
@@ -122,9 +122,9 @@ done
 while [ true ]; do
 
 	# For each webcam, check if videos are being generated
-	for webcam_instance in ${WEBCAM_INSTANCES[@]}; do
+	for webcam_instance in "${WEBCAM_INSTANCES[@]}"; do
 		# Check reduced videos after waiting one minute
-		define_cam_foder ${webcam_instance}
+		define_cam_foder "${webcam_instance}"
 		if [ "${WEBCAM_INSTANCES_INFO[${webcam_instance}_REDUCED_ONLY]}" = false ]; then
 			sleep 60
 			created_raw_videos=$(find "${cam_folder}/raw" -type f -cmin -1 | wc -l)
@@ -135,7 +135,7 @@ while [ true ]; do
 				# Check reduced videos after waiting one minute
 				sleep 60
 				created_raw_reduced_videos=$(find "${cam_folder}/raw_reduced" -type f -cmin -1 | wc -l)
-				if [[ "X${created_raw_videos}X" == "X0X" ]]; then
+				if [[ "X${created_raw_reduced_videos}X" == "X0X" ]]; then
 					write_log "No videos in ${cam_folder}/raw_reduced during last minute."
 					kill_threads
 				fi
@@ -144,7 +144,7 @@ while [ true ]; do
 			# Check reduced videos after waiting one minute
 			sleep 60
 			created_raw_reduced_videos=$(find "${cam_folder}/raw_reduced" -type f -cmin -1 | wc -l)
-			if [[ "X${created_raw_videos}X" == "X0X" ]]; then
+			if [[ "X${created_raw_reduced_videos}X" == "X0X" ]]; then
 				write_log "No videos in ${cam_folder}/raw_reduced during last minute."
 				kill_threads
 			fi
@@ -154,7 +154,7 @@ while [ true ]; do
 
 	sleep 60
 
-	for webcam_instance in ${WEBCAM_INSTANCES[@]}; do
+	for webcam_instance in "${WEBCAM_INSTANCES[@]}"; do
 		define_cam_foder ${webcam_instance}
 		write_log "Checking if ${webcam_instance} ffmpeg recording is still running"
 		ffmpeg_instances=$(ps -aux | grep -v "su - ${OWNER_USER}" | grep ffmpeg | grep "${cam_folder}/raw" | grep -v grep | wc -l)

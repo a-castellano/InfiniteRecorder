@@ -60,21 +60,38 @@ function take_snapshots {
 #
 
 function record_video {
-	options=$(echo "${@:4}" | xargs)
-	record_video_options_array=(
-		-y -i "$1" "${options}"
-		-map 0 -f segment -segment_time "${VIDEO_LENGTH}"
-		-segment_format mp4 -strftime 1 -reset_timestamps 1
-		"$2/record-%Y-%m-%d_%H-%M-%S.mp4"
-		-vcodec libx264
-		-f segment -segment_time "${VIDEO_LENGTH}"
-		-segment_format mp4
-		-preset ultrafast -crf 40 -tune fastdecode
-		-strftime 1 -reset_timestamps 1
-		"$3/record-%Y-%m-%d_%H-%M-%S.mp4"
-		-vcodec libx264
-		-metadata title="$4"
-	)
+	options="${@:4}"
+	if [ -z "${options}" ]; then
+		record_video_options_array=(
+			-y -i "$1"
+			-map 0 -f segment -segment_time "${VIDEO_LENGTH}"
+			-segment_format mp4 -strftime 1 -reset_timestamps 1
+			"$2/record-%Y-%m-%d_%H-%M-%S.mp4"
+			-vcodec libx264
+			-f segment -segment_time "${VIDEO_LENGTH}"
+			-segment_format mp4
+			-preset ultrafast -crf 40 -tune fastdecode
+			-strftime 1 -reset_timestamps 1
+			"$3/record-%Y-%m-%d_%H-%M-%S.mp4"
+			-vcodec libx264
+			-metadata title="$4"
+		)
+	else
+		record_video_options_array=(
+			-y -i "$1" "${options}"
+			-map 0 -f segment -segment_time "${VIDEO_LENGTH}"
+			-segment_format mp4 -strftime 1 -reset_timestamps 1
+			"$2/record-%Y-%m-%d_%H-%M-%S.mp4"
+			-vcodec libx264
+			-f segment -segment_time "${VIDEO_LENGTH}"
+			-segment_format mp4
+			-preset ultrafast -crf 40 -tune fastdecode
+			-strftime 1 -reset_timestamps 1
+			"$3/record-%Y-%m-%d_%H-%M-%S.mp4"
+			-vcodec libx264
+			-metadata title="$4"
+		)
+	fi
 	ffmpeg "${record_video_options_array[@]}" 2>/dev/null >/dev/null
 }
 
@@ -91,17 +108,30 @@ function record_video {
 #
 
 function record_reduced_video {
-	options=$(echo "${@:4}" | xargs)
-	record_video_options_array=(
-		-y -i "$1" "${options}"
-		-map 0 -f segment -segment_time "${VIDEO_LENGTH}"
-		-segment_format mp4
-		-preset ultrafast -crf 40 -tune fastdecode
-		-strftime 1 -reset_timestamps 1
-		"$2/record-%Y-%m-%d_%H-%M-%S.mp4"
-		-vcodec libx264
-		-metadata title="$3"
-	)
+	options="${@:4}"
+	if [ -z "${options}" ]; then
+		record_video_options_array=(
+			-y -i "$1"
+			-map 0 -f segment -segment_time "${VIDEO_LENGTH}"
+			-segment_format mp4
+			-preset ultrafast -crf 40 -tune fastdecode
+			-strftime 1 -reset_timestamps 1
+			"$2/record-%Y-%m-%d_%H-%M-%S.mp4"
+			-vcodec libx264
+			-metadata title="$3"
+		)
+	else
+		record_video_options_array=(
+			-y -i "$1" "${options}"
+			-map 0 -f segment -segment_time "${VIDEO_LENGTH}"
+			-segment_format mp4
+			-preset ultrafast -crf 40 -tune fastdecode
+			-strftime 1 -reset_timestamps 1
+			"$2/record-%Y-%m-%d_%H-%M-%S.mp4"
+			-vcodec libx264
+			-metadata title="$3"
+		)
+	fi
 	ffmpeg "${record_video_options_array[@]}" 2>/dev/null >/dev/null
 }
 

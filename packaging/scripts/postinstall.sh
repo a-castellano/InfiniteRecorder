@@ -51,7 +51,7 @@ if getent passwd "${selected_user}" >/dev/null; then
 
 	user_home=$(getent passwd "${selected_user}" | cut -d: -f6)
 
-	mkdir -p  "${user_home}/.config/systemd/user"
+	mkdir -p "${user_home}/.config/systemd/user"
 
 	cat <<EOF >"${user_home}/.config/windmaker-infiniterecorder-env-example"
 #!/bin/bash
@@ -93,9 +93,13 @@ Type=simple
 ExecStart=/usr/local/bin/windmaker-infiniterecorder
 Restart=always
 Environment="ENV_FILE=${user_home}/.config/windmaker-infiniterecorder-env"
+
+[Install]
+WantedBy=default.target
 EOF
 
-chown "${selected_user}:" "${user_home}/.config/systemd/user/windmaker-infiniterecorder.service"
+	chown "${selected_user}:" "${user_home}/.config/systemd/user/windmaker-infiniterecorder.service"
+	chmod -R "${user_home}:" "${user_home}/.config/systemd"
 
 	echo "As user '${selected_user}', run the following command:"
 	echo ""
