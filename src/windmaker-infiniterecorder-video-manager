@@ -70,6 +70,18 @@ fi
 # Calculate merged video period in seconds
 MERGED_VIDEO_PERIOD_SECONDS=$(timestring_to_seconds "${MERGED_VIDEO_SECONDS}")
 
+
+#####
+#
+#  Get all days between yesterday and earliest non merged video modification day
+#  Caclculate days between that dates
+#  For each day:
+#     Calculate dates o that day with MERGED_VIDEO_PERIOD_SECONDS as inteval
+#     Find videos bewteen intervals
+#     Merge videos
+#     Modify modifcation time to be the same a latest video from inerval
+#
+
 for webcam_instance in "${WEBCAM_INSTANCES[@]}"; do
 		define_cam_foder "${webcam_instance}"
 	if [ "${WEBCAM_INSTANCES_INFO[${webcam_instance}_REDUCED_ONLY]}" = false ]; then
