@@ -24,3 +24,12 @@ function timestring_to_seconds {
 	seconds=$((time_array[0] * 60 + time_array[1]))
 	echo "${seconds}"
 }
+
+# calculate_yesterday_timestamp
+#
+# calculates timestamp for yesterday at 23:59 (local time)
+
+function calculate_yesterday_timestamp {
+	seconds=$(date -d "yesterday 23:59" '+%s')
+	echo "${seconds}"
+}
