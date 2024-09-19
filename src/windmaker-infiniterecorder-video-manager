@@ -20,6 +20,7 @@ source lib/01-log.sh
 source lib/02-variable-management.sh
 source lib/04-ffmpeg.sh
 source lib/06-time-management.sh
+source lib/07-merge-utils.sh
 
 ###################
 ###     Main    ###
@@ -68,7 +69,8 @@ fi
 	fi
 
 # Calculate merged video period in seconds
-MERGED_VIDEO_PERIOD_SECONDS=$(timestring_to_seconds "${MERGED_VIDEO_SECONDS}")
+declare -g MERGED_VIDEO_PERIOD_SECONDS
+MERGED_VIDEO_PERIOD_SECONDS=$(timestring_to_seconds "${MERGED_VIDEO_PERIOD}")
 
 
 #####
@@ -82,9 +84,15 @@ MERGED_VIDEO_PERIOD_SECONDS=$(timestring_to_seconds "${MERGED_VIDEO_SECONDS}")
 #     Modify modifcation time to be the same a latest video from inerval
 #
 
+declare -g yesterday_date
+yesterday_date=$(date +"%Y-%m-%d" -d "- 1 day")
+
 for webcam_instance in "${WEBCAM_INSTANCES[@]}"; do
 		define_cam_foder "${webcam_instance}"
 	if [ "${WEBCAM_INSTANCES_INFO[${webcam_instance}_REDUCED_ONLY]}" = false ]; then
-		earlier_raw_video_timestamp=$(find "${cam_folder}/raw_reduced" -type f -printf "%T@\n" | sort -n | head -1 | perl -pe 's/\..*$//')
+		# Pocess raw folder
+		merge_videos_from_folder "${cam_folder}" "raw"
 			fi
+		# Pocess raw reduced folder
+		merge_videos_from_folder "${cam_folder}" "raw_reduced"
 done

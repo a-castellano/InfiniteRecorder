@@ -33,3 +33,21 @@ function calculate_yesterday_timestamp {
 	seconds=$(date -d "yesterday 23:59" '+%s')
 	echo "${seconds}"
 }
+
+# get_between_dates
+#
+# calculates dates between start date and end date
+
+function get_between_dates {
+	start_date="$1"
+	end_date="$2"
+
+	date_to_check="${start_date}"
+
+	while (( $(date -d "${date_to_check}" '+%s' ) < $(date -d "${end_date}" '+%s' ) )); do 
+			echo "${date_to_check}"; 
+			date_to_check=$(date -d "${date_to_check} + 1 day" +"%Y-%m-%d"); 
+		done
+}
+
+
