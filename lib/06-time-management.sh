@@ -44,10 +44,8 @@ function get_between_dates {
 
 	date_to_check="${start_date}"
 
-	while (( $(date -d "${date_to_check}" '+%s' ) < $(date -d "${end_date}" '+%s' ) )); do 
-			echo "${date_to_check}"; 
-			date_to_check=$(date -d "${date_to_check} + 1 day" +"%Y-%m-%d"); 
-		done
+	while (($(date -d "${date_to_check}" '+%s') < $(date -d "${end_date}" '+%s'))); do
+		echo "${date_to_check}"
+		date_to_check=$(date -d "${date_to_check} + 1 day" +"%Y-%m-%d")
+	done
 }
-
-

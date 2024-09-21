@@ -28,6 +28,8 @@ source lib/07-merge-utils.sh
 
 SCRIPT_NAME="Windmaker InfiniteRecorder Video Manager"
 
+write_log "Starting windmaker-infiniterecorder-video-manager"
+
 if [ -z "${ENV_FILE}" ]; then
 	write_log "ENV_FILE variable is not defined, aborting"
 	exit 1
@@ -40,38 +42,37 @@ else
 	source "${ENV_FILE}"
 fi
 
-	# Check Variables
-	declare -a required_variables
-	required_variables=(
-		'recording-folder'
-		'raw-video-delete-time'
-		'reduced-video-delete-time'
-		'merged-video-period'
-		'webcam-instances'
-	)
+# Check Variables
+declare -a required_variables
+required_variables=(
+	'recording-folder'
+	'raw-video-delete-time'
+	'reduced-video-delete-time'
+	'merged-video-period'
+	'webcam-instances'
+)
 
-	abort_script=false
+abort_script=false
 
-	# Check Required variables
+# Check Required variables
 
-	for var in "${required_variables[@]}"; do
-		variable=$(echo "${var}" | tr '[:lower:]' '[:upper:]' | tr '-' '_')
-		check_required_variable "${variable}"
-		defined_variable=$?
-		if [ "${defined_variable}" = "0" ]; then
-			abort_script=true
-		fi
-	done
-
-	if [ "${abort_script}" = true ]; then
-		write_log "Aborting execucion"
-		exit 1
+for var in "${required_variables[@]}"; do
+	variable=$(echo "${var}" | tr '[:lower:]' '[:upper:]' | tr '-' '_')
+	check_required_variable "${variable}"
+	defined_variable=$?
+	if [ "${defined_variable}" = "0" ]; then
+		abort_script=true
 	fi
+done
+
+if [ "${abort_script}" = true ]; then
+	write_log "Aborting execucion"
+	exit 1
+fi
 
 # Calculate merged video period in seconds
 declare -g MERGED_VIDEO_PERIOD_SECONDS
 MERGED_VIDEO_PERIOD_SECONDS=$(timestring_to_seconds "${MERGED_VIDEO_PERIOD}")
-
 
 #####
 #
@@ -88,11 +89,13 @@ declare -g yesterday_date
 yesterday_date=$(date +"%Y-%m-%d" -d "- 1 day")
 
 for webcam_instance in "${WEBCAM_INSTANCES[@]}"; do
-		define_cam_foder "${webcam_instance}"
+	write_log "Cheking videos to merge from webcm ${webcam_instance}"
+	cam_folder=$(define_cam_foder "${webcam_instance}")
 	if [ "${WEBCAM_INSTANCES_INFO[${webcam_instance}_REDUCED_ONLY]}" = false ]; then
 		# Pocess raw folder
 		merge_videos_from_folder "${cam_folder}" "raw"
-			fi
-		# Pocess raw reduced folder
-		merge_videos_from_folder "${cam_folder}" "raw_reduced"
+	fi
+	# Pocess raw reduced folder
+	merge_videos_from_folder "${cam_folder}" "raw_reduced"
+	write_log "windmaker-infiniterecorder-video-manager ended"
 done

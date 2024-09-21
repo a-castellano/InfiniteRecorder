@@ -119,7 +119,7 @@ for webcam_instance in "${WEBCAM_INSTANCES[@]}"; do
 done
 
 # Check if ffmpeg instances are still running
-while true ; do
+while true; do
 
 	# For each webcam, check if videos are being generated
 	for webcam_instance in "${WEBCAM_INSTANCES[@]}"; do
