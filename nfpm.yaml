@@ -1,7 +1,7 @@
 name: "windmaker-infiniterecorder"
 arch: "any"
 platform: "linux"
-version: "0.10-1"
+version: "0.10-2"
 section: "default"
 priority: "extra"
 provides:
@@ -25,8 +25,6 @@ contents:
 # Scripts to run at specific stages. (overridable)
 scripts:
   postinstall: ./packaging/scripts/postinstall.sh
-  postremove: ./packaging/scripts/postremove.sh
-
 overrides:
   deb:
     depends:
