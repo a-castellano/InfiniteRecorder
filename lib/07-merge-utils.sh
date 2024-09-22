@@ -69,7 +69,7 @@ function merge_videos_from_folder_by_date {
 			first_video_file_array=(${videos_to_merge[0]//\// })
 			first_video_file_name="${first_video_file_array[-1]}"
 
-			ffmpeg -safe 0 -f concat -i "${video_list}" -c copy "${merged_video_folder_container}/${first_video_file_name}" 2> /dev/null > /dev/null
+			ffmpeg -safe 0 -f concat -i "${video_list}" -c copy "${merged_video_folder_container}/${first_video_file_name}" 2>/dev/null >/dev/null
 
 			touch -r "${videos_to_merge[0]}" "${merged_video_folder_container}/${first_video_file_name}"
 
