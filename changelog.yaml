@@ -6,7 +6,7 @@
       * Fix default config file overwrite.
       * Run windmaker-infinite-recorder as non-root user direclty
       * Fix service stop
-      * windmaker-infinite-recorder-video-manager merge videos
+      * windmaker-infinite-recorder-video-manager merge videos and removes old files
     author:
       name: Álvaro Castellano Vela
       email: alvaro.castellano.vela@gmail.com

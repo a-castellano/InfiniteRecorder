@@ -98,7 +98,40 @@ Environment="ENV_FILE=${user_home}/.config/windmaker-infiniterecorder-env"
 WantedBy=default.target
 EOF
 
+	cat <<EOF >"${user_home}/.config/systemd/user/windmaker-infiniterecorder-video-manager.service"
+[Unit]
+Description=Windmaker Infiniterecorder Video Manager
+Wants=network-online.target
+After=nss-lookup.target
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/windmaker-infiniterecorder-video-manager
+Environment="ENV_FILE=${user_home}/.config/windmaker-infiniterecorder-env"
+
+[Install]
+WantedBy=default.target
+EOF
+
+	cat <<EOF >"${user_home}/.config/systemd/user/windmaker-infiniterecorder-video-manager.timer"
+[Unit]
+Description=Windmaker Infiniterecorder Video Manager Timer
+Wants=network-online.target
+After=nss-lookup.target
+After=network-online.target
+
+[Timer]
+Unit=windmaker-infiniterecorder-video-manager.service
+OnCalendar=*-*-* 01:00:00
+
+[Install]
+WantedBy=default.target
+EOF
+
 	chown "${selected_user}:" "${user_home}/.config/systemd/user/windmaker-infiniterecorder.service"
+	chown "${selected_user}:" "${user_home}/.config/systemd/user/windmaker-infiniterecorder-video-manager.service"
+	chown "${selected_user}:" "${user_home}/.config/systemd/user/windmaker-infiniterecorder-video-manager.timer"
 	chmod -R "${user_home}:" "${user_home}/.config/systemd"
 
 	echo "As user '${selected_user}', run the following command:"
@@ -109,11 +142,15 @@ EOF
 	echo ""
 	echo "Example env file has been placed in ${user_home}/.config/windmaker-infiniterecorder-env-example"
 	echo ""
-	echo "Run the folloign command for enabling windmaker-infiniterecorder service"
+	echo "Run the following command for enabling windmaker-infiniterecorder service"
 	echo "systemctl --user enable windmaker-infiniterecorder.service"
 	echo ""
 	echo "Run the following command for starting windmaker-infiniterecorder service:"
 	echo "systemctl --user start windmaker-infiniterecorder.service"
+	echo ""
+	echo "Run the following command for enabling windmaker-infiniterecorder-video-manager service and timer"
+	echo "systemctl --user enable windmaker-infiniterecorder-video-manager.service"
+	echo "systemctl --user enable windmaker-infiniterecorder-video-manager.timer"
 	echo ""
 	echo "Visit https://github.com/a-castellano/InfiniteRecorder for more info and docs"
 

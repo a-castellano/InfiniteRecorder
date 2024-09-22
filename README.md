@@ -69,12 +69,14 @@ Services will be installed in selected user folder during install.
 systemctl --user start windmaker-infiniterecorder.service
 ```
 
-Pacakge will create a cron file containing removal tasks:
-```bash
-# cat /etc/cron.d/windmaker-infiniterecorder
-*/2 * * * * root flock -x -w 30 /tmp/windmaker-infiniterecorder-video-manager.lock -c '/usr/bin/windmaker-infiniterecorder-video-manager'
-```
+*windmaker-infiniterecorder-video-manager* service will merge videos, it will also delete old videos depending of *RAW_VIDEO_DELETE_TIME* and *REDUCED_VIDEO_DELETE_TIME*. 
 
+This service runs using a timer that will execute video manager each day at 01:00.
+
+It can be enabled as follows:
+```bash
+systemctl --user start windmaker-infiniterecorder-video-manager.service windmaker-infiniterecorder-video-manager.timer
+```
 ## Development tips
 
 ### Set source variables during development proccess

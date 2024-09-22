@@ -98,4 +98,15 @@ for webcam_instance in "${WEBCAM_INSTANCES[@]}"; do
 	# Pocess raw reduced folder
 	merge_videos_from_folder "${cam_folder}" "raw_reduced"
 	write_log "windmaker-infiniterecorder-video-manager ended"
+
+	if [ "${WEBCAM_INSTANCES_INFO[${webcam_instance}_REDUCED_ONLY]}" = false ]; then
+	write_log "Removing raw files older than ${RAW_VIDEO_DELETE_TIME} minutes"
+	find "${cam_folder}/raw" -type f -mmin "+${RAW_VIDEO_DELETE_TIME}" -delete
+	find "${cam_folder}/merged/raw" -type f -mmin "+${RAW_VIDEO_DELETE_TIME}" -delete
+	find "${cam_folder}/merged/raw" -type d -empty -delete
+	fi
+	write_log "Removing reduced files older than ${RAW_VIDEO_DELETE_TIME} minutes"
+	find "${cam_folder}/raw_reduced" -type f -mmin "+${RAW_VIDEO_DELETE_TIME}" -delete
+	find "${cam_folder}/merged/raw_reduced" -type f -mmin "+${RAW_VIDEO_DELETE_TIME}" -delete
+	find "${cam_folder}/merged/raw_reduced" -type d -empty -delete
 done
