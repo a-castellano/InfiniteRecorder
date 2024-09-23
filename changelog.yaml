@@ -1,9 +1,12 @@
-- semver: 0.9.12
-  date: 2024-07-29T19:29:00+02:00
+- semver: 0.10-2
+  date: 2024-09-13T19:29:00+02:00
   packager: Álvaro Castellano Vela <alvaro.castellano.vela@gmail>
   changes:
   - note: |-
-      Allow settngs to record only quality reduced videos
+      * Fix default config file overwrite.
+      * Run windmaker-infinite-recorder as non-root user direclty
+      * Fix service stop
+      * windmaker-infinite-recorder-video-manager merge videos and removes old files
     author:
       name: Álvaro Castellano Vela
       email: alvaro.castellano.vela@gmail.com

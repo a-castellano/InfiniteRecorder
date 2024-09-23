@@ -20,11 +20,11 @@
 # returns 1 (true) or 0 (false) if it exists
 
 function check_required_variable {
-	required_variable=$1
-	if [[ "$(declare -p ${required_variable})" =~ "declare " ]]; then
+	required_variable="$1"
+	if [[ $(declare -p "${required_variable}" 2>/dev/null) =~ "declare " ]]; then
 		return 1
 	else
-		write_log "${variable} is not defined."
+		write_log "${required_variable} is not defined."
 		return 0
 	fi
 }
@@ -35,9 +35,9 @@ function check_required_variable {
 # returns 1 (true) or 0 (false) if it exists
 
 function check_webcam_info {
-	webcam_instance=$1
+	webcam_instance="$1"
 	error_code=1
-	for required_property in "IP" "PORT" "RTSP_URL" "FFMPEG_OPTIONS" "USER" "PASSWORD" "REDUCED_ONLY"; do
+	for required_property in "IP" "PORT" "RTSP_URL" "FFMPEG_OPTIONS" "PASSWORD" "REDUCED_ONLY"; do
 		if [[ ! -v "WEBCAM_INSTANCES_INFO[${webcam_instance}_${required_property}]" ]]; then
 			write_log "WEBCAM_INSTANCES_INFO[${webcam_instance}_${required_property}] is not set."
 			error_code=0
@@ -53,4 +53,5 @@ function check_webcam_info {
 function define_cam_foder {
 	cam_name=$1
 	cam_folder=$(echo "${RECORDING_FOLDER}/${cam_name}" | perl -pe "s/\/\//\//g")
+	echo "${cam_folder}"
 }

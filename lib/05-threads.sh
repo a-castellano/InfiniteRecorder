@@ -14,7 +14,7 @@
 #      REVISION:  ---
 #===============================================================================
 
-source lib/08-log.sh
+source lib/01-log.sh
 
 # kill_threads
 #
@@ -22,19 +22,9 @@ source lib/08-log.sh
 
 function kill_threads {
 	write_log "Killing recording processes"
-	for job_to_kill in $(ps -aux | grep -E "^${OWNER_USER}" | grep ffmpeg | grep "${RECORDING_FOLDER}" | awk '{print $2}'); do
-		kill -9 ${job_to_kill}
-	done
+	kill -9 "$(ps -efj --no-headers | awk -v pid=$$ '$3==pid {print $2}' | xargs)"
+	exit 0
 }
 
 # Trap SIGTERM signal for killing threads
 trap 'kill_threads' SIGTERM
-
-# force_ffmpeg_kill
-#
-# kills all fmpeg threads
-
-function kill_threads {
-	write_log "Killing all ffmpeg processes"
-	pkill -9 ffmpeg
-}

@@ -19,5 +19,5 @@
 # writes log using logger
 
 function write_log {
-	logger -t "${SCRIPT_NAME}" $@
+	logger -t "${SCRIPT_NAME}" "$@"
 }

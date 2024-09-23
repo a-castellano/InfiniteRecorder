@@ -23,12 +23,12 @@ source lib/01-log.sh
 function take_snapshots {
 	failed_snapshots=false
 	snapshot_location=$(mktemp -d)
-	for webcam_instance in ${WEBCAM_INSTANCES[@]}; do
+	for webcam_instance in "${WEBCAM_INSTANCES[@]}"; do
 		# Take Snapshot
 		RTSP_URL="rtsp://${WEBCAM_INSTANCES_INFO[${webcam_instance}_USER]}:${WEBCAM_INSTANCES_INFO[${webcam_instance}_PASSWORD]}@${WEBCAM_INSTANCES_INFO[${webcam_instance}_IP]}:${WEBCAM_INSTANCES_INFO[${webcam_instance}_PORT]}${WEBCAM_INSTANCES_INFO[${webcam_instance}_URL]}"
 		WEBCAM_INSTANCES_INFO[${webcam_instance}_RTSP_URL]="${RTSP_URL}"
 		write_log "Taking snapshot test from ${webcam_instance}"
-		/usr/bin/ffmpeg -y -i ${RTSP_URL} -vframes 1 "${snapshot_location}/${webcam_instance}.jpg" >/dev/null 2>/dev/null
+		/usr/bin/ffmpeg -y -i "${RTSP_URL}" -vframes 1 "${snapshot_location}/${webcam_instance}.jpg" >/dev/null 2>/dev/null
 		ffmpeg_result=$?
 		test -f "${snapshot_location}/${webcam_instance}.jpg"
 		snapshot_result=$?
@@ -37,7 +37,7 @@ function take_snapshots {
 			failed_snapshots=true
 		fi
 	done
-	rm -rf ${snapshot_location}
+	rm -rf "${snapshot_location}"
 	if [ "${failed_snapshots}" = true ]; then
 		write_log "Some snapshot tests have failed."
 		return 0
@@ -60,9 +60,39 @@ function take_snapshots {
 #
 
 function record_video {
-	record_video_command="
-ffmpeg -y -i '$1' ${@:5} -map 0 -f segment -segment_time ${VIDEO_LENGTH} -segment_format mp4 -strftime 1 -reset_timestamps 1 \"$2/record-%Y-%m-%d_%H-%M-%S.mp4\" -vcodec libx264 -metadata title=\"$4\" -f segment -segment_time ${VIDEO_LENGTH} -segment_format mp4 -preset ultrafast -crf 40 -tune fastdecode -strftime 1 -reset_timestamps 1  \"$3/record-%Y-%m-%d_%H-%M-%S.mp4\" -vcodec libx264 -metadata title=\"$4\""
-	runuser -l "${OWNER_USER}" -c "${record_video_command}" 2>/dev/null >/dev/null
+	options="${@:4}"
+	if [ -z "${options}" ]; then
+		record_video_options_array=(
+			-y -i "$1"
+			-map 0 -f segment -segment_time "${VIDEO_LENGTH}"
+			-segment_format mp4 -strftime 1 -reset_timestamps 1
+			"$2/record-%Y-%m-%d_%H-%M-%S.mp4"
+			-vcodec libx264
+			-f segment -segment_time "${VIDEO_LENGTH}"
+			-segment_format mp4
+			-preset ultrafast -crf 40 -tune fastdecode
+			-strftime 1 -reset_timestamps 1
+			"$3/record-%Y-%m-%d_%H-%M-%S.mp4"
+			-vcodec libx264
+			-metadata title="$4"
+		)
+	else
+		record_video_options_array=(
+			-y -i "$1" "${options}"
+			-map 0 -f segment -segment_time "${VIDEO_LENGTH}"
+			-segment_format mp4 -strftime 1 -reset_timestamps 1
+			"$2/record-%Y-%m-%d_%H-%M-%S.mp4"
+			-vcodec libx264
+			-f segment -segment_time "${VIDEO_LENGTH}"
+			-segment_format mp4
+			-preset ultrafast -crf 40 -tune fastdecode
+			-strftime 1 -reset_timestamps 1
+			"$3/record-%Y-%m-%d_%H-%M-%S.mp4"
+			-vcodec libx264
+			-metadata title="$4"
+		)
+	fi
+	ffmpeg "${record_video_options_array[@]}" 2>/dev/null >/dev/null
 }
 
 # record_reduced_video
@@ -78,9 +108,31 @@ ffmpeg -y -i '$1' ${@:5} -map 0 -f segment -segment_time ${VIDEO_LENGTH} -segmen
 #
 
 function record_reduced_video {
-	record_video_command="
-ffmpeg -y -i '$1' ${@:4} -map 0 -f segment -segment_time ${VIDEO_LENGTH} -segment_format mp4 -preset ultrafast -crf 40 -tune fastdecode -strftime 1 -reset_timestamps 1  \"$2/record-%Y-%m-%d_%H-%M-%S.mp4\" -vcodec libx264 -metadata title=\"$3\""
-	runuser -l "${OWNER_USER}" -c "${record_video_command}" 2>/dev/null >/dev/null
+	options="${@:4}"
+	if [ -z "${options}" ]; then
+		record_video_options_array=(
+			-y -i "$1"
+			-map 0 -f segment -segment_time "${VIDEO_LENGTH}"
+			-segment_format mp4
+			-preset ultrafast -crf 40 -tune fastdecode
+			-strftime 1 -reset_timestamps 1
+			"$2/record-%Y-%m-%d_%H-%M-%S.mp4"
+			-vcodec libx264
+			-metadata title="$3"
+		)
+	else
+		record_video_options_array=(
+			-y -i "$1" "${options}"
+			-map 0 -f segment -segment_time "${VIDEO_LENGTH}"
+			-segment_format mp4
+			-preset ultrafast -crf 40 -tune fastdecode
+			-strftime 1 -reset_timestamps 1
+			"$2/record-%Y-%m-%d_%H-%M-%S.mp4"
+			-vcodec libx264
+			-metadata title="$3"
+		)
+	fi
+	ffmpeg "${record_video_options_array[@]}" 2>/dev/null >/dev/null
 }
 
 # combine_and_reduce_videos
@@ -89,6 +141,8 @@ ffmpeg -y -i '$1' ${@:4} -map 0 -f segment -segment_time ${VIDEO_LENGTH} -segmen
 #
 # Args
 # $1 -> instance folder location
+#
+# DELETE THIS FUNCTION
 #
 
 function combine_and_reduce_videos {
